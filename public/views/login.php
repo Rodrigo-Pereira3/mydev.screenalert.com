@@ -31,23 +31,5 @@
         </form>
     </div>
 
-    <script 
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-        document.querySelector('#loginForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // impede envio real
-
-    const email = document.querySelector('#email').value;
-    const password = document.querySelector('#password').value;
-
-    if(email === 'rodas.s.p84@gmail.com' && password === '1234') {
-        alert('Login bem-sucedido!');
-        // redirecionar para página segura, por exemplo:
-        window.location.href = 'dashboard.html';
-    } else {
-        alert('Credenciais incorretas. Tente novamente.');
-    }
-});
-    </script>
-
 </body>
 </html>

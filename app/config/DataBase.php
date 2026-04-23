@@ -2,7 +2,7 @@
 
 class DataBase {
     private $host = "localhost";
-    private $db_name = "mydevscreenalert";
+    private $db_name = "sa_system";
     private $username = "root";
     private $password = "";
 
