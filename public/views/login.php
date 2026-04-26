@@ -16,7 +16,7 @@
     <div class="card shadow p-4" style="width: 350px;">
         <h3 class="text-center mb-3">Login</h3>
 
-        <form action="dashboard.html" method="GET">
+        <form action="/dashboard" method="GET">
             <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input type="email" class="form-control" required>

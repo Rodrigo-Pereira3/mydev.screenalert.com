@@ -13,9 +13,9 @@ if($uri === '/' || $uri === '/index' || $uri === '/home') {
 } elseif($uri === '/login' && $method === 'GET') {
     (new WebController())->login();
 
-} elseif($uri === '/login' && $method === 'POST') {
-    var_dump("Estou a tentar validar o login");
-    (new AuthController())->validateLogin();
+} elseif($uri === '/dashboard' && $method === 'GET') {
+    
+    (new WebController())->dashboard();
     
 } else {
     echo "Página não encontrada";

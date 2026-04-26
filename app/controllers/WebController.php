@@ -12,5 +12,9 @@ class WebController {
     public function login() {
         $this->view('login');
     }
+
+    public function dashboard() {
+        $this->view('dashboard');
+    }
   
 }
