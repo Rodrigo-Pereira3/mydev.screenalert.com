@@ -4,7 +4,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6 mb-2 mb-md-0">
                     <span class="fw-semibold text-white">Screen Alert Admin</span>
-                    <span class="ms-2">&copy; 2025. All rights reserved.</span>
+                    <span class="ms-2">&copy; 2026. All rights reserved.</span>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <a href="#" class="text-secondary text-decoration-none me-3">Support</a>
