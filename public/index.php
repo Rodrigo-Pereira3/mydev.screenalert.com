@@ -13,6 +13,9 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 } elseif ($uri === '/login' && $method === 'GET') {
     (new WebController())->login();
 
+} elseif ($uri === '/login' && $method === 'POST') {
+    (new AuthController())->validateLogin();
+
 } elseif ($uri === '/dashboard' && $method === 'GET') {
 
     (new WebController())->dashboard();
