@@ -1,43 +1,40 @@
 <?php
 
 require __DIR__ . '/../dao/UserDAO.php';
-require __DIR__ . '/../dao/EmailVerificationDAO.php';
 
 class AuthController
 {
-
-    private function view($name, $data = [])
-    {
-        extract($data, EXTR_SKIP);
-        require __DIR__ . '/../../public/views/' . $name . '.php';
-    }
-
     public function loginWeb()
     {
-        $email = trim($_POST['email'] ?? '');
+        $email    = trim($_POST['email'] ?? '');
         $password = trim($_POST['password'] ?? '');
 
-        var_dump($email);
-        var_dump($password);
-
-        $passwordEncript = password_hash($password, PASSWORD_DEFAULT);
-
-        var_dump($passwordEncript);
-        // Se não houver email ou password, mostrar erro
         if (empty($email) || empty($password)) {
             die("Email e password são obrigatórios");
         }
 
         $user = (new UserDAO())->findByEmail($email);
 
+        // Utilizador não existe ou não é admin
         if (!$user) {
-
-            // Password incorreta
-            die("Password ou email incorretos");
+            die("Email ou password incorretos");
         }
-        var_dump("User encontrado: " . $user['email']);
 
+        // Verificar password contra o hash guardado na BD
+        if (!password_verify($password, $user->getPasswordEmail())) {
+            die("Email ou password incorretos");
+        }
+
+        // Login OK — guardar sessão e redirecionar
+        session_start();
+        $_SESSION['user_id']    = $user->getId();
+        $_SESSION['user_name']  = $user->getNameUser();
+        $_SESSION['is_admin']   = $user->getIsAdmin();
+
+        header('Location: /dashboard');
+        exit;
     }
+
 
     public function logoutWeb()
     {
@@ -45,7 +42,8 @@ class AuthController
         header("Location: /home");
         exit;
     }
-    public function validateSignup()
+    
+    /**public function validateSignup()
     {
         $username = trim($_POST['username'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -115,5 +113,5 @@ class AuthController
         // Token válido
 
         $this->view('verify-email', ['token' => $token]);
-    }
+    }**/
 }

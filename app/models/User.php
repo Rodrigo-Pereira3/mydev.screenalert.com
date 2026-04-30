@@ -1,105 +1,124 @@
 <?php
 
-class User
-{
+class User {
+    // Colunas da tabela
     private int $id;
-    private string $username;
+    private ?int $id_cuidador;
+    private bool $is_admin;
+    private string $name_user;
+    private string $birth_date;
     private string $email;
-    private string $password;
-    private bool $isAdmin;
-    private ?string $createdAt;
-    private ?string $updatedAt;
-    private ?string $deletedAt;
+    private string $password_email;
+    private string $status; // 'Active' | 'Blocked'
+    private string $created_at;
+    private string $last_updated;
 
+    // Constructor
     public function __construct(
         int $id = 0,
-        string $username = '',
+        ?int $id_cuidador = null,
+        bool $is_admin = false,
+        string $name_user = '',
+        string $birth_date = '',
         string $email = '',
-        string $password = '',
-        bool $isAdmin = false,
-        ?string $createdAt = null,
-        ?string $updatedAt = null,
-        ?string $deletedAt = null
+        string $password_email = '',
+        string $status = 'Active',
+        string $created_at = '',
+        string $last_updated = ''
     ) {
         $this->id = $id;
-        $this->username = $username;
+        $this->id_cuidador = $id_cuidador;
+        $this->is_admin = $is_admin;
+        $this->name_user = $name_user;
+        $this->birth_date = $birth_date;
         $this->email = $email;
-        $this->password = $password;
-        $this->isAdmin = $isAdmin;
-        $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
-        $this->deletedAt = $deletedAt;
+        $this->password_email = $password_email;
+        $this->status = $status;
+        $this->created_at = $created_at;
+        $this->last_updated = $last_updated;
     }
 
-    public function getId(): int
-    {
+    // --- Getters ---
+
+    public function getId(): int {
         return $this->id;
     }
-    public function setId(int $id): void
-    {
+
+    public function getIdCuidador(): ?int {
+        return $this->id_cuidador;
+    }
+
+    public function getIsAdmin(): bool {
+        return $this->is_admin;
+    }
+
+    public function getNameUser(): string {
+        return $this->name_user;
+    }
+
+    public function getBirthDate(): string {
+        return $this->birth_date;
+    }
+
+    public function getEmail(): string {
+        return $this->email;
+    }
+
+    public function getPasswordEmail(): string {
+        return $this->password_email;
+    }
+
+    public function getStatus(): string {
+        return $this->status;
+    }
+
+    public function getCreatedAt(): string {
+        return $this->created_at;
+    }
+
+    public function getLastUpdated(): string {
+        return $this->last_updated;
+    }
+
+    // --- Setters ---
+
+    public function setId(int $id): void {
         $this->id = $id;
     }
 
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-    public function setUsername(string $username): void
-    {
-        $this->username = $username;
+    public function setIdCuidador(?int $id_cuidador): void {
+        $this->id_cuidador = $id_cuidador;
     }
 
-    public function getEmail(): string
-    {
-        return $this->email;
+    public function setIsAdmin(bool $is_admin): void {
+        $this->is_admin = $is_admin;
     }
-    public function setEmail(string $email): void
-    {
+
+    public function setNameUser(string $name_user): void {
+        $this->name_user = $name_user;
+    }
+
+    public function setBirthDate(string $birth_date): void {
+        $this->birth_date = $birth_date;
+    }
+
+    public function setEmail(string $email): void {
         $this->email = $email;
     }
 
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
+    public function setPasswordEmail(string $password_email): void {
+        $this->password_email = $password_email;
     }
 
-    public function isAdmin(): bool
-    {
-        return $this->isAdmin;
-    }
-    public function setIsAdmin(bool $isAdmin): void
-    {
-        $this->isAdmin = $isAdmin;
+    public function setStatus(string $status): void {
+        $this->status = $status;
     }
 
-    public function getCreatedAt(): ?string
-    {
-        return $this->createdAt;
-    }
-    public function setCreatedAt(?string $createdAt): void
-    {
-        $this->createdAt = $createdAt;
+    public function setCreatedAt(string $created_at): void {
+        $this->created_at = $created_at;
     }
 
-    public function getUpdatedAt(): ?string
-    {
-        return $this->updatedAt;
-    }
-    public function setUpdatedAt(?string $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
-    }
-
-    public function getDeletedAt(): ?string
-    {
-        return $this->deletedAt;
-    }
-    public function setDeletedAt(?string $deletedAt): void
-    {
-        $this->deletedAt = $deletedAt;
+    public function setLastUpdated(string $last_updated): void {
+        $this->last_updated = $last_updated;
     }
 }

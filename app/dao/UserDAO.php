@@ -11,33 +11,29 @@ class UserDAO {
         $this->conn = (new DataBase())->connect();
     }
 
-    public function findByEmail($email) {
-        // Lógica para encontrar um utilizador pelo email
-        $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
-        // Preparar e executar a query usando PDO
-        $stmt = $this->conn->prepare($sql);
+    public function findByEmail(string $email): ?User {
+    $sql = "SELECT * FROM users WHERE email = :email AND is_admin = TRUE LIMIT 1";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
 
-        $stmt->bindParam(':email', $email);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt->execute();
-
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        var_dump($row);
-
-        if($row) {
-            $user = new User(
-            $row['id'],
-            $row['username'],
-            $row['email'],
-            $row['created_at'],
-            $row['updated_at'],
-            $row['deleted_at']
-        );
-            var_dump($user);
-            return $row; // Retorna os dados do utilizador
-        } else {
-            return null; // Utilizador não encontrado
+    if ($row) {
+            return new User(
+                $row['id'],
+                $row['id_cuidador'],
+                $row['is_admin'],
+                $row['name_user'],
+                $row['birth_date'],
+                $row['email'],
+                $row['password_email'],
+                $row['status'],
+                $row['created_at'],
+                $row['last_updated']
+            );
         }
+
+        return null;
     }
 }

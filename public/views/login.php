@@ -14,19 +14,17 @@
     <div class="card shadow p-4" style="width: 350px;">
         <h3 class="text-center mb-3">Login</h3>
 
-        <form action="/dashboard" method="GET">
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Senha</label>
-                <input type="password" class="form-control" required>
-            </div>
-
-            <button class="btn btn-primary w-100">Entrar</button>
-        </form>
+        <form action="/login" method="POST">
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Senha</label>
+        <input type="password" name="password" class="form-control" required>
+    </div>
+    <button class="btn btn-primary w-100">Entrar</button>
+</form>
     </div>
 
 </body>

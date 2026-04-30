@@ -18,10 +18,16 @@ class WebController
     }
 
     public function dashboard()
-    {
-        $this->view('dashboard');
+{
+    session_start();
+
+    if (empty($_SESSION['user_id'])) {
+        header('Location: /login');
+        exit;
     }
 
+    $this->view('dashboard');
+}
     public function signup()
     {
         $this->view('signup');
