@@ -110,4 +110,15 @@ class AuthController
 
         $this->view('verify-email', ['token' => $token]);
     }
+
+    public function logout()
+    {
+        // Limpar sessão
+        session_unset();
+        session_destroy();
+
+        // Redirecionar para a página inicial
+        header("Location: /home");
+        exit();
+    }
 }

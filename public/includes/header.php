@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,8 @@
     <!-- TOP BAR -->
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
-            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+            <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#adminSidebar">
                 ☰
             </button>
             <span class="navbar-brand mb-0 h1">Screen Alert Admin</span>
@@ -34,6 +36,9 @@
                 <a href="/views/devices.php" class="list-group-item list-group-item-action">Devices</a>
                 <a href="/views/logs.php" class="list-group-item list-group-item-action">Logs</a>
                 <a href="/views/schedules.php" class="list-group-item list-group-item-action">Schedules</a>
+                <form action="logout.php" method="post" style="display:inline;">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         </div>
     </div>

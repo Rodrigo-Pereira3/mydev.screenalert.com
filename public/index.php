@@ -20,6 +20,10 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 
     (new WebController())->dashboard();
 
+} elseif ($uri === '/logout' && $method === 'POST') {
+    
+    (new AuthController())->logout();
+
 } else {
     echo "Página não encontrada";
 }

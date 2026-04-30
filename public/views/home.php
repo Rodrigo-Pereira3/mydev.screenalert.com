@@ -1,5 +1,5 @@
 <?php include __DIR__ . "/../includes/header_sitePromo.php"; ?>
-
+<link rel="stylesheet" href="./assets/css/tooplate-strategic-style.css">
     <section id="home" class="hero">
         <div class="geometric-shapes">
             <div class="geo-shape"></div>
