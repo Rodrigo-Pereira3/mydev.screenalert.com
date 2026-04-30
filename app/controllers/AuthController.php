@@ -12,7 +12,7 @@ class AuthController
         require __DIR__ . '/../../public/views/' . $name . '.php';
     }
 
-    public function validateLogin()
+    public function loginWeb()
     {
         $email = trim($_POST['email'] ?? '');
         $password = trim($_POST['password'] ?? '');
@@ -39,6 +39,12 @@ class AuthController
 
     }
 
+    public function logoutWeb()
+    {
+        session_destroy();
+        header("Location: /home");
+        exit;
+    }
     public function validateSignup()
     {
         $username = trim($_POST['username'] ?? '');
@@ -109,16 +115,5 @@ class AuthController
         // Token válido
 
         $this->view('verify-email', ['token' => $token]);
-    }
-
-    public function logout()
-    {
-        // Limpar sessão
-        session_unset();
-        session_destroy();
-
-        // Redirecionar para a página inicial
-        header("Location: /home");
-        exit();
     }
 }
