@@ -12,7 +12,7 @@ class UserDAO {
     }
 
     public function findByEmail(string $email): ?User {
-    $sql = "SELECT * FROM users WHERE email = :email AND is_admin = TRUE LIMIT 1";
+    $sql = "SELECT * FROM users WHERE email = :email AND is_admin = 1 LIMIT 1";
     $stmt = $this->conn->prepare($sql);
     $stmt->bindParam(':email', $email);
     $stmt->execute();

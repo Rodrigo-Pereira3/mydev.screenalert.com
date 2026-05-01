@@ -17,7 +17,7 @@ class AuthController
 
         // Utilizador não existe ou não é admin
         if (!$user) {
-            die("Email ou password incorretos");
+            die("Este user não existe ou não tem permissão de acesso");
         }
 
         // Verificar password contra o hash guardado na BD
