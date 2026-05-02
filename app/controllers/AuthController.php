@@ -36,7 +36,7 @@ class AuthController
     }
 
 
-    public function logoutWeb()
+    public function logout()
     {
         session_destroy();
         header("Location: /home");

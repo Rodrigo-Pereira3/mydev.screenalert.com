@@ -114,6 +114,5 @@
         </div>
     </div>
 
-<?php include __DIR__ . "/../includes/footer.php"; ?>
- 
-<script src="../js/users.js"></script>
+ <?php include __DIR__ . "/../includes/footer.php"; ?>
+<script src="/public/assets/js/users.js"></script>

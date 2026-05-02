@@ -29,14 +29,14 @@
         </div>
         <div class="offcanvas-body p-0">
             <div class="list-group list-group-flush">
-                <a href="/views/dashboard.php" class="list-group-item list-group-item-action">Dashboard</a>
-                <a href="/views/users.php" class="list-group-item list-group-item-action">Users</a>
-                <a href="/views/patients.php" class="list-group-item list-group-item-action">Patients</a>
-                <a href="/views/messages.php" class="list-group-item list-group-item-action">Messages</a>
-                <a href="/views/devices.php" class="list-group-item list-group-item-action">Devices</a>
+                <a href="/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
+                <a href="/users" class="list-group-item list-group-item-action">Users</a>
+                <a href="/patients" class="list-group-item list-group-item-action">Patients</a>
+                <a href="/messages" class="list-group-item list-group-item-action">Messages</a>
+                <a href="/devices" class="list-group-item list-group-item-action">Devices</a>
                 <a href="/views/logs.php" class="list-group-item list-group-item-action">Logs</a>
                 <a href="/views/schedules.php" class="list-group-item list-group-item-action">Schedules</a>
-                <form action="logout.php" method="post" style="display:inline;">
+                <form action="/logout" method="post" style="display:inline;">
                     <button type="submit">Logout</button>
                 </form>
             </div>

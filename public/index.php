@@ -17,6 +17,21 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 } elseif ($uri === '/dashboard' && $method === 'GET') {
     (new WebController())->dashboard();
 
+} elseif ($uri === '/users' && $method === 'GET') {
+    (new WebController())->users();
+
+} elseif ($uri === '/patients' && $method === 'GET') {
+    (new WebController())->patients();
+
+} elseif ($uri === '/messages' && $method === 'GET') {
+    (new WebController())->messages();
+
+} elseif ($uri === '/devices' && $method === 'GET') {
+    (new WebController())->devices();
+
+} elseif ($uri === '/logout' && $method === 'POST') {
+    (new AuthController())->logout();
+
 } else {
     echo "Página não encontrada";
 }
