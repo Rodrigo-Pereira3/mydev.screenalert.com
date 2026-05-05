@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "../app/controllers/WebController.php";
 require "../app/controllers/AuthController.php"; // <- faltava isto
 

@@ -13,7 +13,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Users</h5>
-                        <h2 class="text-primary">12</h2>
+                        <h2 class="text-primary"><?= $users_count ?></h2>
                         <p class="text-muted small">Active caregivers</p>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Patients</h5>
-                        <h2 class="text-success">18</h2>
+                        <h2 class="text-success"><?= $patients_count ?></h2>
                         <p class="text-muted small">Monitored patients</p>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Devices</h5>
-                        <h2 class="text-warning">15</h2>
+                        <h2 class="text-warning"><?= $devices_count ?></h2>
                         <p class="text-muted small">Online devices</p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Alerts Today</h5>
-                        <h2 class="text-danger">4</h2>
+                        <h2 class="text-danger"><?= $alerts_count ?></h2>
                         <p class="text-muted small">Triggered alerts</p>
                     </div>
                 </div>

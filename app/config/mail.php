@@ -5,6 +5,6 @@ return [
     'username' => '22f1ddefdb015d',
     'password' => '74ddd6248ac9a4',
     'encryption' => 'tls',   // 'tls' (STARTTLS) normalmente
-    'from_email' => 'no-reply@mydevfriendslist.com',
+    'from_email' => 'no-reply@mydevscreenalert.com',
     'from_name' => 'Meu Site',
 ];

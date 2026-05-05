@@ -36,4 +36,15 @@ class UserDAO {
 
         return null;
     }
+
+    public function userCount(string $email): int {
+    $sql = "SELECT COUNT(*) FROM users WHERE email = :email AND is_admin = 1";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+
+    return (int) $stmt->fetchColumn();
+
+    }
+
 }

@@ -1,9 +1,9 @@
 <?php
-
 class WebController
 {
-    private function view($viewName)
+    private function view($viewName, $data = [])
     {
+        extract($data, EXTR_SKIP);
         require_once __DIR__ . "/../../public/views/{$viewName}.php";
     }
 
@@ -19,14 +19,20 @@ class WebController
 
     public function dashboard()
     {
-        session_start();
-
         if (empty($_SESSION['user_id'])) {
             header('Location: /login');
             exit;
         }
 
-        $this->view('dashboard');
+        $dados = [
+            'users_count' => 42, // Exemplo de dado para o dashboard
+            'patients_count' => 128, // Exemplo de dado para o dashboard
+            'devices_count' => 256, // Exemplo de dado para o dashboard
+            'alerts_count' => 64, // Exemplo de dado para o dashboard
+        ];
+
+
+        $this->view('dashboard', $dados);
     }
 
     public function users()
