@@ -19,7 +19,7 @@ class WebController
 
     public function dashboard()
     {
-        if (empty($_SESSION['user_id'])) {
+        if (!isset($_SESSION['token'])) {
             header('Location: /login');
             exit;
         }
