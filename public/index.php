@@ -31,7 +31,7 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
     (new WebController())->devices();
 
 } elseif ($uri === '/logout' && $method === 'POST') {
-    (new AuthController())->logout();
+    (new AuthController())->logoutWeb();
 
 } else {
     echo "Página não encontrada";
