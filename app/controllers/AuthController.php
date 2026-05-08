@@ -22,20 +22,30 @@ class AuthController
         // Se não houver email ou password, mostrar erro
         // é preciso lançar exceção para o index.php apanhar e mostrar o erro via flash message
         if (empty($email) || empty($password)) {
-            die("Email e password são obrigatórios");
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'message' => 'Email e password são OBRIGATÓRIOS!'
+            ];
+            header("Location: /login");
+            exit;
         }
 
         $user = (new UserDAO())->findByEmail($email);
-        var_dump(password_verify($password, $user->getPasswordEmail()));
-        
+        // var_dump(password_verify($password, $user->getPasswordEmail()));
+
         if (!$user) {
-            die("Email ou password inválidos");
+            $_SESSION['toast'] = [
+                'type' => 'error',
+                'message' => 'Email ou password inválidos ou não existe conta com esse email'
+            ];
+            header("Location: /login");
+            exit;
         }
 
 
         // Utilizador foi encontrado - verificar password
         if (password_verify($password, $user->getPasswordEmail())) {
-            var_dump("Password correta");
+            //var_dump("Password correta");
             $_SESSION['token'] = [
                 'id' => $user->getId(),
                 'username' => $user->getNameUser(),
@@ -54,7 +64,7 @@ class AuthController
 
             header("Location: /dashboard");
             exit;
-            
+
         } else {
             $_SESSION['toast'] = [
                 'type' => 'error',
@@ -76,6 +86,7 @@ class AuthController
         ];
 
         header("Location: /");
+        exit;
     }
 }
 

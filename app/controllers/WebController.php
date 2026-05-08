@@ -19,20 +19,7 @@ class WebController
 
     public function dashboard()
     {
-        if (!isset($_SESSION['token'])) {
-            header('Location: /login');
-            exit;
-        }
-
-        $dados = [
-            'users_count' => 42, // Exemplo de dado para o dashboard
-            'patients_count' => 128, // Exemplo de dado para o dashboard
-            'devices_count' => 256, // Exemplo de dado para o dashboard
-            'alerts_count' => 64, // Exemplo de dado para o dashboard
-        ];
-
-
-        $this->view('dashboard', $dados);
+        $this->view('dashboard');
     }
 
     public function users()

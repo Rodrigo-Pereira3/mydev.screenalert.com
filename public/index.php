@@ -1,10 +1,17 @@
 <?php
 session_start();
 require "../app/controllers/WebController.php";
-require "../app/controllers/AuthController.php"; // <- faltava isto
+require "../app/controllers/AuthController.php";
+require "../app/middleware/AuthMiddlewareWeb.php"; // <- faltava isto
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
+$isLogin = AuthMiddlewareWeb::isLogin();
+$error = [
+    'type' => 'error',
+    'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+];
 
 if ($uri === '/' || $uri === '/index' || $uri === '/home') {
     (new WebController())->index();
@@ -16,19 +23,52 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
     (new AuthController())->loginWeb();
 
 } elseif ($uri === '/dashboard' && $method === 'GET') {
-    (new WebController())->dashboard();
+    //$isLogin = AuthMiddlewareWeb::isLogin();
+    // Se utilizador não estiver logado, redirecionar para a página de login
+    if (!$isLogin) {
+        $_SESSION['toast'] = $error;
+        header("Location: /login");
+        exit;
+    } else {
+        (new WebController())->dashboard();
+    }
+
 
 } elseif ($uri === '/users' && $method === 'GET') {
-    (new WebController())->users();
+    if (!$isLogin) {
+        $_SESSION['toast'] = $error;
+        header("Location: /login");
+        exit;
+    } else {
+        (new WebController())->users();
+    }
 
 } elseif ($uri === '/patients' && $method === 'GET') {
-    (new WebController())->patients();
+        if (!$isLogin) {
+            $_SESSION['toast'] = $error;    
+            header("Location: /login");
+            exit;
+        } else {
+            (new WebController())->patients();
+        }
 
 } elseif ($uri === '/messages' && $method === 'GET') {
-    (new WebController())->messages();
+    if (!$isLogin) {
+        $_SESSION['toast'] = $error;
+        header("Location: /login");
+        exit;
+    } else {
+        (new WebController())->messages();
+    }
 
 } elseif ($uri === '/devices' && $method === 'GET') {
-    (new WebController())->devices();
+    if (!$isLogin) {
+        $_SESSION['toast'] = $error;
+        header("Location: /login");
+        exit;
+    } else {
+        (new WebController())->devices();
+    }
 
 } elseif ($uri === '/logout' && $method === 'POST') {
     (new AuthController())->logoutWeb();
