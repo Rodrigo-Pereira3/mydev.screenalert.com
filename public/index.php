@@ -7,11 +7,6 @@ require "../app/middleware/AuthMiddlewareWeb.php"; // <- faltava isto
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 $isLogin = AuthMiddlewareWeb::isLogin();
-$error = [
-    'type' => 'error',
-    'message' => 'Não tem acesso a esta página. 
-        Por favor, faça login primeiro.'
-];
 
 if ($uri === '/' || $uri === '/index' || $uri === '/home') {
     (new WebController())->index();
@@ -26,7 +21,11 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
     //$isLogin = AuthMiddlewareWeb::isLogin();
     // Se utilizador não estiver logado, redirecionar para a página de login
     if (!$isLogin) {
-        $_SESSION['toast'] = $error;
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];
         header("Location: /login");
         exit;
     } else {
@@ -36,7 +35,11 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 
 } elseif ($uri === '/users' && $method === 'GET') {
     if (!$isLogin) {
-        $_SESSION['toast'] = $error;
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];  
         header("Location: /login");
         exit;
     } else {
@@ -44,17 +47,25 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
     }
 
 } elseif ($uri === '/patients' && $method === 'GET') {
-        if (!$isLogin) {
-            $_SESSION['toast'] = $error;    
-            header("Location: /login");
-            exit;
-        } else {
-            (new WebController())->patients();
-        }
+    if (!$isLogin) {
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];
+        header("Location: /login");
+        exit;
+    } else {
+        (new WebController())->patients();
+    }
 
 } elseif ($uri === '/messages' && $method === 'GET') {
     if (!$isLogin) {
-        $_SESSION['toast'] = $error;
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];
         header("Location: /login");
         exit;
     } else {
@@ -63,7 +74,11 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 
 } elseif ($uri === '/devices' && $method === 'GET') {
     if (!$isLogin) {
-        $_SESSION['toast'] = $error;
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];
         header("Location: /login");
         exit;
     } else {
