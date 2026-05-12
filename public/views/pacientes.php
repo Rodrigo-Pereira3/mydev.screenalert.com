@@ -2,15 +2,25 @@
 
 <main class="container mt-4">
 
-    <h1 class="h3 mb-4">User Management</h1>
+  <h1 class="h3 mb-4">paciente Management <?= $user->getNameUser() ?></h1>
 
-    <div class="mb-3">
-        <button class="btn btn-primary" id="openAddModal">+ Add New Caregiver</button>
+
+  <div class="row">
+    <div class="col">
+       <div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <a href="#" class="card-link">Card link</a>
+    <a href="#" class="card-link">Another link</a>
+  </div>
+</div>
     </div>
-
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped table-hover align-middle">
+  </div>
+  <div class="row">
+    <div class="col">
+      <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>ID </th>
@@ -24,46 +34,49 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="userTable">
-                    <?php foreach ($users as $user): ?>
+                <tbody id="pacienteTable">
+                    <?php foreach ($pacientes as $paciente): ?>
                     <tr>
-                        <td><?= $user->getId() ?></td>
+                        <td><?= $paciente->getId() ?></td>
                         <td>
-                            <?php if ($user->getIsAdmin()): ?>
-                                <i class="fa-solid fa-user"></i>
+                            <?php if ($paciente->getIsAdmin()): ?>
+                                <i class="fa-solid fa-paciente"></i>
                             <?php else: ?>
-                                <i class="fa-regular fa-user"></i>
+                                <i class="fa-regular fa-paciente"></i>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php if ($user->getIdCuidador() === null && ! $user->getIsAdmin()): ?>
-                                <a href="/users/<?= $user->getId() ?>/pacientes" >
-                                    <i class="fa-solid fa-user-nurse"></i>
+                            <?php if ($paciente->getIdCuidador() === null && ! $paciente->getIsAdmin()): ?>
+                                <a href="/pacientes/<?= $paciente->getId() ?>/pacientes" >
+                                    <i class="fa-solid fa-paciente-nurse"></i>
                                 </a>
                             <?php endif; ?>
                         </td>
-                        <td><?= $user->getNameUser() ?></td>
-                        <td><?= $user->getEmail() ?></td>
+                        <td><?= $paciente->getNameUser() ?></td>
+                        <td><?= $paciente->getEmail() ?></td>
                         <td>
-                            <?php if ($user->getStatus() === 'Active'): ?>
-                                <span class="badge bg-danger"><?= $user->getStatus() ?></span>
+                            <?php if ($paciente->getStatus() === 'Active'): ?>
+                                <span class="badge bg-danger"><?= $paciente->getStatus() ?></span>
                             <?php else: ?>
-                                <span class="badge bg-secondary"><?= $user->getStatus() ?></span>
+                                <span class="badge bg-secondary"><?= $paciente->getStatus() ?></span>
                             <?php endif; ?>
                         
                         </td>
                         <td>2024-01-10</td>
                         <td>2024-02-20 14:32</td>
                         <td>
-                            <a href="/users/<?= $user->getId() ?>/edit" class="btn btn-sm btn-warning edit-btn"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <button class="btn btn-sm btn-warning edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button class="btn btn-sm btn-danger delete-btn"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+    
     </div>
+  </div>
+ 
+
 
 </main>
 
@@ -114,5 +127,5 @@
         </div>
     </div>
 </div>
-<script src="/assets/js/users.js"></script>
+<script src="/assets/js/pacientes.js"></script>
 <?php include __DIR__ . "/../includes/footer.php"; ?>

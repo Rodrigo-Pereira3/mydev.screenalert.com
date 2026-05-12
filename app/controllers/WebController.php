@@ -24,7 +24,29 @@ class WebController
 
     public function users()
     {
-        $this->view('users');
+        $users = (new UserDAO())->getUsers();
+
+        $this->view('users', ['users' => $users]);
+    }
+
+    public function getPacientes($userId)
+    {
+        $user = (new UserDAO())->findById($userId);
+        $pacientes = (new UserDAO())->getPacientesByUserId($userId);
+
+        $this->view('pacientes', [
+            'user' => $user,
+            'pacientes' => $pacientes
+        ]);
+    }
+
+    public function getUser($userId)
+    {
+        $user = (new UserDAO())->findById($userId);
+
+        $cuidador = $user->getIdCuidador() ? (new UserDAO())->findById($user->getIdCuidador()) : null;
+        
+        var_dump($cuidador);
     }
 
     public function patients()

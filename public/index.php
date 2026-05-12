@@ -46,7 +46,43 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->users();
     }
 
-} elseif ($uri === '/patients' && $method === 'GET') {
+} elseif (preg_match('/\/users\/(\d+)\/pacientes/', $uri, $matches) && $method === 'GET') {
+    if (!$isLogin) {
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];  
+        header("Location: /login");
+        exit;
+    } else {
+
+        (new WebController())->getPacientes($matches[1]);
+    }
+
+} 
+
+elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET') {
+    if (!$isLogin) {
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];  
+        header("Location: /login");
+        exit;
+    } else {
+
+        (new WebController())->getUser($matches[1]);
+    }
+
+} 
+
+
+
+
+
+elseif ($uri === '/patients' && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
             'type' => 'error',
@@ -85,9 +121,27 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->devices();
     }
 
-} elseif ($uri === '/logout' && $method === 'POST') {
+} elseif ($uri === '/create-employee' && $method === "GET") {
+    if (!$isLogin) {
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];
+        header("Location: /login");
+        exit;
+    } else {
+        (new WebController())->createEmployee();
+    }
+
+
+}elseif ($uri === '/logout' && $method === 'POST') {
     (new AuthController())->logoutWeb();
 
-} else {
+}
+
+
+
+else {
     echo "Página não encontrada";
 }
