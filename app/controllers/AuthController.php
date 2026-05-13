@@ -52,11 +52,7 @@ class AuthController
                 'email' => $user->getEmail(),
                 'is_admin' => $user->getIsAdmin()
             ];
-            // Password correta - criar sessão
-            //$_SESSION['user_id'] = $user->id;
-            //$_SESSION['username'] = $user->username;
-
-            // Redirecionar para a home
+            
             $_SESSION['toast'] = [
                 'type' => 'success',
                 'message' => "Bem-vindo de volta, " . $user->getNameUser() . "!"

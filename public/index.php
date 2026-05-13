@@ -76,24 +76,6 @@ elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET
         (new WebController())->getUser($matches[1]);
     }
 
-} 
-
-
-
-
-
-elseif ($uri === '/patients' && $method === 'GET') {
-    if (!$isLogin) {
-        $_SESSION['toast'] = [
-            'type' => 'error',
-            'message' => 'Não tem acesso a esta página. 
-        Por favor, faça login primeiro.'
-        ];
-        header("Location: /login");
-        exit;
-    } else {
-        (new WebController())->patients();
-    }
 
 } elseif ($uri === '/messages' && $method === 'GET') {
     if (!$isLogin) {

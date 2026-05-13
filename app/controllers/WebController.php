@@ -58,11 +58,6 @@ class WebController
         var_dump($cuidador);
     }
 
-    public function patients()
-    {
-        $this->view('patients');
-    }
-
     public function messages()
     {
         $this->view('messages');
