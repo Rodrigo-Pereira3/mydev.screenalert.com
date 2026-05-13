@@ -122,4 +122,39 @@ class UserDAO {
     }
 
 
+    public function getUsersCount(): int {
+        $sql = "SELECT COUNT(*) FROM users
+                WHERE is_admin = 0 AND id_cuidador IS NULL";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getPacientesCount(): int {
+        $sql = "SELECT COUNT(*) FROM users
+                WHERE is_admin = 0 AND id_cuidador IS NOT NULL";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getDevicesCount(): int {
+        $sql = "SELECT COUNT(*) FROM screen_alert_displays";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getAlertsCount(): int {
+        $sql = "SELECT COUNT(*) FROM alerts";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
 }
+       

@@ -12,9 +12,9 @@
             <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Users</h5>
-                        <h2 class="text-primary">1</h2>
-                        <p class="text-muted small">Active caregivers</p>
+                        <h5 class="card-title">Caregivers</h5>
+                        <h2 class="text-primary"><?= $userCount ?></h2>
+                        <p class="text-muted small">Caregivers to take care of patients</p>
                     </div>
                 </div>
             </div>
@@ -23,8 +23,8 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Patients</h5>
-                        <h2 class="text-success">5</h2>
-                        <p class="text-muted small">Monitored patients</p>
+                        <h2 class="text-success"><?= $pacientesCount ?></h2>
+                        <p class="text-muted small">Patients under care</p>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Devices</h5>
-                        <h2 class="text-warning">10</h2>
+                        <h2 class="text-warning"><?= $devicesCount ?></h2>
                         <p class="text-muted small">Online devices</p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Alerts Today</h5>
-                        <h2 class="text-danger">3</h2>
+                        <h2 class="text-danger"><?= $alertsCount ?></h2>
                         <p class="text-muted small">Triggered alerts</p>
                     </div>
                 </div>

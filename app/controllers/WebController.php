@@ -19,7 +19,16 @@ class WebController
 
     public function dashboard()
     {
-        $this->view('dashboard');
+        $usersCount = (new UserDAO())->getUsersCount();
+        $pacientesCount = (new UserDAO())->getPacientesCount();
+        $devicesCount = (new UserDAO())->getDevicesCount();
+        $alertsCount = (new UserDAO())->getAlertsCount();
+        $this->view('dashboard', [
+            'userCount' => $usersCount,
+            'pacientesCount' => $pacientesCount,
+            'devicesCount' => $devicesCount,
+            'alertsCount' => $alertsCount
+        ]);
     }
 
     public function users()
@@ -45,7 +54,7 @@ class WebController
         $user = (new UserDAO())->findById($userId);
 
         $cuidador = $user->getIdCuidador() ? (new UserDAO())->findById($user->getIdCuidador()) : null;
-        
+
         var_dump($cuidador);
     }
 

@@ -34,7 +34,6 @@
             <div class="list-group list-group-flush">
                 <a href="/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
                 <a href="/users" class="list-group-item list-group-item-action">Users</a>
-                <a href="/patients" class="list-group-item list-group-item-action">Patients</a>
                 <a href="/messages" class="list-group-item list-group-item-action">Messages</a>
                 <a href="/devices" class="list-group-item list-group-item-action">Devices</a>
                 <a href="/views/logs.php" class="list-group-item list-group-item-action">Logs</a>
