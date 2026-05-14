@@ -46,9 +46,9 @@
                         <td><?= $user->getEmail() ?></td>
                         <td>
                             <?php if ($user->getStatus() === 'Active'): ?>
-                                <span class="badge bg-danger"><?= $user->getStatus() ?></span>
+                                <span class="badge bg-success"><?= $user->getStatus() ?></span>
                             <?php else: ?>
-                                <span class="badge bg-secondary"><?= $user->getStatus() ?></span>
+                                <span class="badge bg-danger"><?= $user->getStatus() ?></span>
                             <?php endif; ?>
                         
                         </td>

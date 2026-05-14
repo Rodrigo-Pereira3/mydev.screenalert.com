@@ -2,24 +2,28 @@
 
 require_once __DIR__ . '/../config/DataBase.php';
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Message.php';
 
-class UserDAO {
+class UserDAO
+{
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         // Conectar á base de dados
         $this->conn = (new DataBase())->connect();
     }
 
-    public function findByEmail(string $email): ?User {
-    $sql = "SELECT * FROM users WHERE email = :email AND is_admin = 1 LIMIT 1";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
+    public function findByEmail(string $email): ?User
+    {
+        $sql = "SELECT * FROM users WHERE email = :email AND is_admin = 1 LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
 
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($row) {
+        if ($row) {
             return new User(
                 $row['id'],
                 $row['id_cuidador'],
@@ -37,17 +41,19 @@ class UserDAO {
         return null;
     }
 
-    public function userCount(string $email): int {
-    $sql = "SELECT COUNT(*) FROM users WHERE email = :email AND is_admin = 1";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
+    public function userCount(string $email): int
+    {
+        $sql = "SELECT COUNT(*) FROM users WHERE email = :email AND is_admin = 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
 
-    return (int) $stmt->fetchColumn();
+        return (int) $stmt->fetchColumn();
 
     }
 
-    public function getUsers(): array {
+    public function getUsers(): array
+    {
         $sql = "SELECT * FROM users";
         $stmt = $this->conn->query($sql);
         $users = [];
@@ -70,7 +76,8 @@ class UserDAO {
         return $users;
     }
 
-    public function getPacientesByUserId($userId): array {
+    public function getPacientesByUserId($userId): array
+    {
         $sql = "SELECT * FROM users WHERE id_cuidador = :user_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':user_id', $userId);
@@ -91,19 +98,20 @@ class UserDAO {
                 $row['last_updated']
             );
         }
-        
+
         return $users;
     }
 
-    public function findById(string $id): ?User {
-    $sql = "SELECT * FROM users WHERE id = :id LIMIT 1";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bindParam(':id', $id);
-    $stmt->execute();
+    public function findById(string $id): ?User
+    {
+        $sql = "SELECT * FROM users WHERE id = :id LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
 
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($row) {
+        if ($row) {
             return new User(
                 $row['id'],
                 $row['id_cuidador'],
@@ -122,7 +130,8 @@ class UserDAO {
     }
 
 
-    public function getUsersCount(): int {
+    public function getUsersCount(): int
+    {
         $sql = "SELECT COUNT(*) FROM users
                 WHERE is_admin = 0 AND id_cuidador IS NULL";
         $stmt = $this->conn->prepare($sql);
@@ -131,7 +140,8 @@ class UserDAO {
         return (int) $stmt->fetchColumn();
     }
 
-    public function getPacientesCount(): int {
+    public function getPacientesCount(): int
+    {
         $sql = "SELECT COUNT(*) FROM users
                 WHERE is_admin = 0 AND id_cuidador IS NOT NULL";
         $stmt = $this->conn->prepare($sql);
@@ -140,7 +150,8 @@ class UserDAO {
         return (int) $stmt->fetchColumn();
     }
 
-    public function getDevicesCount(): int {
+    public function getDevicesCount(): int
+    {
         $sql = "SELECT COUNT(*) FROM screen_alert_displays";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -148,7 +159,8 @@ class UserDAO {
         return (int) $stmt->fetchColumn();
     }
 
-    public function getAlertsCount(): int {
+    public function getAlertsCount(): int
+    {
         $sql = "SELECT COUNT(*) FROM alerts";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -156,5 +168,31 @@ class UserDAO {
         return (int) $stmt->fetchColumn();
     }
 
+    public function getMessages(): array
+{
+    $sql = "SELECT 
+        m.id AS id_message,
+        m.id_user AS id_paciente,
+        m.Status AS status,
+        m.sent_at AS data_enviada,
+        m.text_message AS texto_mensagem
+    FROM messages m
+    INNER JOIN users u ON m.id_user = u.id
+    WHERE u.id_cuidador IS NOT NULL;";
+    
+    $stmt = $this->conn->query($sql);
+    $messages = [];
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $messages[] = new Message(
+            $row['id_message'],      
+            $row['id_paciente'],
+            $row['status'],          
+            $row['data_enviada'],    
+            $row['texto_mensagem']  
+            ); 
+    }
+
+    return $messages;
 }
-       
+}

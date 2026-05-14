@@ -60,7 +60,10 @@ class WebController
 
     public function messages()
     {
-        $this->view('messages');
+        $user = (new UserDAO())->getMessages();
+        $this->view('messages', [
+            'messages' => $user
+        ]);
     }
 
     public function devices()
