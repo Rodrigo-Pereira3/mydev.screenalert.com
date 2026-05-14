@@ -41,7 +41,7 @@ class WebController
     public function getPacientes($userId)
     {
         $user = (new UserDAO())->findById($userId);
-        $pacientes = (new UserDAO())->getPacientesByUserId($userId);
+        $pacientes = (new UserDAO())->getPacientesByCuidadorId($userId);
 
         $this->view('pacientes', [
             'user' => $user,
@@ -49,13 +49,16 @@ class WebController
         ]);
     }
 
-    public function getUser($userId)
+    public function getCuidador($userId)
     {
         $user = (new UserDAO())->findById($userId);
 
         $cuidador = $user->getIdCuidador() ? (new UserDAO())->findById($user->getIdCuidador()) : null;
 
-        var_dump($cuidador);
+        $this->view('cuidador', [
+            'user' => $user,
+            'cuidador' => $cuidador
+        ]);
     }
 
     public function messages()

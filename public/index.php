@@ -46,7 +46,7 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->users();
     }
 
-} elseif (preg_match('/\/users\/(\d+)\/pacientes/', $uri, $matches) && $method === 'GET') {
+} elseif (preg_match('/\/cuidador\/(\d+)\/pacientes/', $uri, $matches) && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
             'type' => 'error',
@@ -60,9 +60,7 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->getPacientes($matches[1]);
     }
 
-} 
-
-elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET') {
+}elseif (preg_match('/\/paciente\/(\d+)\/cuidador/', $uri, $matches) && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
             'type' => 'error',
@@ -73,7 +71,21 @@ elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET
         exit;
     } else {
 
-        (new WebController())->getUser($matches[1]);
+        (new WebController())->getCuidador($matches[1]);
+    }
+
+}elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET') {
+    if (!$isLogin) {
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Não tem acesso a esta página. 
+        Por favor, faça login primeiro.'
+        ];  
+        header("Location: /login");
+        exit;
+    } else {
+
+        (new WebController())->getCuidador($matches[1]);
     }
 
 
@@ -102,20 +114,6 @@ elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET
     } else {
         (new WebController())->devices();
     }
-
-} elseif ($uri === '/create-employee' && $method === "GET") {
-    if (!$isLogin) {
-        $_SESSION['toast'] = [
-            'type' => 'error',
-            'message' => 'Não tem acesso a esta página. 
-        Por favor, faça login primeiro.'
-        ];
-        header("Location: /login");
-        exit;
-    } else {
-        (new WebController())->createEmployee();
-    }
-
 
 }elseif ($uri === '/logout' && $method === 'POST') {
     (new AuthController())->logoutWeb();

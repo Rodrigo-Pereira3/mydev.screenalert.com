@@ -76,7 +76,7 @@ class UserDAO
         return $users;
     }
 
-    public function getPacientesByUserId($userId): array
+    public function getPacientesByCuidadorId($userId): array
     {
         $sql = "SELECT * FROM users WHERE id_cuidador = :user_id";
         $stmt = $this->conn->prepare($sql);
@@ -175,22 +175,24 @@ class UserDAO
         m.id_user AS id_paciente,
         m.Status AS status,
         m.sent_at AS data_enviada,
-        m.text_message AS texto_mensagem
+        m.text_message AS texto_mensagem,
+        u.name_user AS nome_paciente
     FROM messages m
     INNER JOIN users u ON m.id_user = u.id
-    WHERE u.id_cuidador IS NOT NULL;";
+    WHERE u.id_cuidador IS NOT NULL";
     
     $stmt = $this->conn->query($sql);
     $messages = [];
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $messages[] = new Message(
-            $row['id_message'],      
+            $row['id_message'],
             $row['id_paciente'],
-            $row['status'],          
-            $row['data_enviada'],    
-            $row['texto_mensagem']  
-            ); 
+            $row['status'],
+            $row['data_enviada'],
+            $row['texto_mensagem'],
+            $row['nome_paciente']   // novo campo
+        );
     }
 
     return $messages;

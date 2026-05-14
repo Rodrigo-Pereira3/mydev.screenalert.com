@@ -37,7 +37,7 @@
                         </td>
                         <td>
                             <?php if ($user->getIdCuidador() === null && ! $user->getIsAdmin()): ?>
-                                <a href="/users/<?= $user->getId() ?>/pacientes" >
+                                <a href="/cuidador/<?= $user->getId() ?>/pacientes" >
                                     <i class="fa-solid fa-user-nurse"></i>
                                 </a>
                             <?php endif; ?>

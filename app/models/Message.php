@@ -7,6 +7,7 @@ class Message {
     private string $status; // 'Seen' | 'Unseen'
     private string $sent_at;
     private string $text_message;
+    private string $nome_paciente; // Nome do paciente (para exibição)
 
     // Constructor
     public function __construct(
@@ -14,13 +15,15 @@ class Message {
         int $id_paciente = 0,
         string $status = 'Unseen',
         string $sent_at = '',
-        string $text_message = ''
+        string $text_message = '',
+        string $nome_paciente = ''
     ) {
         $this->id           = $id;
         $this->id_paciente  = $id_paciente;
         $this->status       = $status;
         $this->sent_at      = $sent_at;
         $this->text_message = $text_message;
+        $this->nome_paciente = $nome_paciente;
     }
 
     // --- Getters ---
@@ -45,6 +48,10 @@ class Message {
         return $this->text_message;
     }
 
+    public function getNomePaciente(): string {
+        return $this->nome_paciente;
+    }
+
     // --- Setters ---
 
     public function setId(int $id): void {
@@ -65,5 +72,9 @@ class Message {
 
     public function setTextMessage(string $text_message): void {
         $this->text_message = $text_message;
+    }
+
+    public function setNomePaciente(string $nome_paciente): void {
+        $this->nome_paciente = $nome_paciente;
     }
 }
