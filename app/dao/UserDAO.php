@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../config/DataBase.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Message.php';
+require_once __DIR__ . '/../models/Device.php';
 
 class UserDAO
 {
@@ -197,4 +198,28 @@ class UserDAO
 
     return $messages;
 }
+    public function getDevices(): array
+{
+    $sql = "SELECT 
+        d.id AS id_device,
+        d.id_user AS id_paciente,
+        d.token_device AS token
+    FROM screen_alert_displays d
+    INNER JOIN users u ON d.id_user = u.id
+    WHERE u.id_cuidador IS NOT NULL";
+    
+    $stmt = $this->conn->query($sql);
+    $devices = [];
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $devices[] = new Device(
+            $row['id_device'],
+            $row['id_paciente'],
+            $row['token']
+        );
+    }
+
+    return $devices;
+}
+
 }
