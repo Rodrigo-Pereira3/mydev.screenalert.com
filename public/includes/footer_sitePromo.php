@@ -24,3 +24,8 @@
         toastr[toast.type](toast.message);
     }
 </script>
+
+<script src="../assets/js/tooplate-strategic-scripts.js"></script>
+<script src="../assets/js/home-page-translater.js"></script>
+</body>
+</html>

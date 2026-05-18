@@ -203,7 +203,3 @@
 
     <?php include __DIR__ . "/../includes/footer_sitePromo.php"; ?>
 
-<script src="../assets/js/tooplate-strategic-scripts.js"></script>
-<script src="../assets/js/home-page-translater.js"></script>
-</body>
-</html>
