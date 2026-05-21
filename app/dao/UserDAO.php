@@ -17,7 +17,9 @@ class UserDAO
 
     public function findByEmail(string $email): ?User
     {
-        $sql = "SELECT * FROM users WHERE email = :email AND is_admin = 1 LIMIT 1";
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password_email, status, created_at, last_updated 
+        FROM users 
+        WHERE email = :email AND is_admin = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -174,7 +176,7 @@ class UserDAO
     $sql = "SELECT 
         m.id AS id_message,
         m.id_user AS id_paciente,
-        m.Status AS status,
+        m.status AS status,
         m.sent_at AS data_enviada,
         m.text_message AS texto_mensagem,
         u.name_user AS nome_paciente
@@ -221,5 +223,35 @@ class UserDAO
 
     return $devices;
 }
+
+public function findByEmailAPP(string $email): ?User
+    {
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password_email, status, created_at, last_updated 
+        FROM users 
+        WHERE email = :email AND is_admin = 0 LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new User(
+                $row['id'],
+                $row['id_cuidador'],
+                $row['is_admin'],
+                $row['name_user'],
+                $row['birth_date'],
+                $row['email'],
+                $row['password_email'],
+                $row['status'],
+                $row['created_at'],
+                $row['last_updated']
+            );
+        }
+
+        return null;
+    }
+
 
 }

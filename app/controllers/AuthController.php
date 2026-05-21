@@ -88,9 +88,31 @@ class AuthController
     }
 
     public function signupApi() {
+        $pdo = DatabaseSingle::connect();
         
-       die("ggggggg");
+        $pdo->beginTransaction();
 
+        try {
+            $username = trim ($_POST["username"] ?? '');
+            $email = trim ($_POST['email'] ?? '');
+            $password = trim ($_POST['password'] ?? '');
+
+            if ($username === '' || $email === '' || $password === '') {
+                throw new Exception("Todos os campos são obrigatórios.");
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Email inválido.");
+            }
+
+            $userDAO = new UserDAO();
+
+            if ($userDAO->findByEmailAPP($email)) {
+                throw new Exception("Já existe uma conta com esse email.");
+            }
+
+
+        }  
     }
 
 
