@@ -2,7 +2,16 @@
 
 require __DIR__ . '/../dao/UserDAO.php';
 require_once __DIR__ . "/../config/DatabaseSingle.php";
+require_once __DIR__ ."/../utils/Utils.php";
+require __DIR__ . '/../dao/EmailVerificationDAO.php';
+require_once __DIR__ . "/../services/MyMailerService.php";
 
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\BeforeValidException;
 
 class AuthController
 {
@@ -54,7 +63,7 @@ class AuthController
                 'email' => $user->getEmail(),
                 'is_admin' => $user->getIsAdmin()
             ];
-            
+
             $_SESSION['toast'] = [
                 'type' => 'success',
                 'message' => "Bem-vindo de volta, " . $user->getNameUser() . "!"
@@ -87,17 +96,21 @@ class AuthController
         exit;
     }
 
-    public function signupApi() {
+
+    // APP
+    public function signupApi()
+    {
         $pdo = DatabaseSingle::connect();
-        
+
         $pdo->beginTransaction();
 
         try {
-            $username = trim ($_POST["username"] ?? '');
-            $email = trim ($_POST['email'] ?? '');
-            $password = trim ($_POST['password'] ?? '');
+            $username = trim($_POST["username"] ?? '');
+            $birth_date = trim($_POST["birth_date"] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = trim($_POST['password'] ?? '');
 
-            if ($username === '' || $email === '' || $password === '') {
+            if ($username === '' || $birth_date === '' || $email === '' || $password === '') {
                 throw new Exception("Todos os campos são obrigatórios.");
             }
 
@@ -111,8 +124,49 @@ class AuthController
                 throw new Exception("Já existe uma conta com esse email.");
             }
 
+            $userId = $userDAO->createPending($username, $birth_date, $email, $password);
 
-        }  
+            $verifyDAO = new EmailVerificationDAO();
+            $token = $verifyDAO->createForUser($userId, 600);
+
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $baseUrl = $scheme . '://' . $host;
+
+            $link = $baseUrl . "/verify-email?token=" . urlencode($token);
+
+            $subject = "Verifica o teu email (expira em 5 min)";
+            $html = "
+                <div style='font-family: Arial, sans-serif;'>
+                    <h2>Olá, " . htmlspecialchars($username) . "!</h2>
+                    <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
+                    <p><a href='{$link}'>{$link}</a></p>
+                    <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
+                </div>
+                ";
+
+            (new MyMailerService())->send($email, $subject, $html);
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Signup realizado com sucesso',
+                'data' => [],
+            ];
+
+            $pdo->commit();
+
+            Utils::jsonResponse($responseData, 200);
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            
+            $responseData = [
+                'success' => false,
+                'message' => 'Erro no signup: ' . $e->getMessage(),
+                'data' => [],
+            ];
+
+            Utils::jsonResponse($responseData, 400);
+        }
     }
 
 

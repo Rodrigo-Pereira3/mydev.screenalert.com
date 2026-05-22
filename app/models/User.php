@@ -8,10 +8,11 @@ class User {
     private string $name_user;
     private string $birth_date;
     private string $email;
-    private string $password_email;
-    private string $status; // 'Active' | 'Blocked'
+    private string $password;
+    private string $status; 
+    private string $verified_at;
     private string $created_at;
-    private string $last_updated;
+    private string $deleted_at;
 
     // Constructor
     public function __construct(
@@ -21,10 +22,11 @@ class User {
         string $name_user = '',
         string $birth_date = '',
         string $email = '',
-        string $password_email = '',
+        string $password = '',
         string $status = 'Active',
+        string $verified_at = '',
         string $created_at = '',
-        string $last_updated = ''
+        string $deleted_at = ''
     ) {
         $this->id = $id;
         $this->id_cuidador = $id_cuidador;
@@ -32,10 +34,11 @@ class User {
         $this->name_user = $name_user;
         $this->birth_date = $birth_date;
         $this->email = $email;
-        $this->password_email = $password_email;
+        $this->password = $password;    
         $this->status = $status;
+        $this->verified_at = $verified_at;
         $this->created_at = $created_at;
-        $this->last_updated = $last_updated;
+        $this->deleted_at = $deleted_at;
     }
 
     // --- Getters ---
@@ -64,20 +67,24 @@ class User {
         return $this->email;
     }
 
-    public function getPasswordEmail(): string {
-        return $this->password_email;
+    public function getPassword(): string {
+        return $this->password;
     }
 
     public function getStatus(): string {
         return $this->status;
     }
 
+    public function getVerifiedAt(): string {
+        return $this->verified_at;
+    }
+
     public function getCreatedAt(): string {
         return $this->created_at;
     }
 
-    public function getLastUpdated(): string {
-        return $this->last_updated;
+    public function getDeletedAt(): string {
+        return $this->deleted_at;
     }
 
     // --- Setters ---
@@ -106,19 +113,23 @@ class User {
         $this->email = $email;
     }
 
-    public function setPasswordEmail(string $password_email): void {
-        $this->password_email = $password_email;
+    public function setPassword(string $password): void {
+        $this->password = $password;
     }
 
     public function setStatus(string $status): void {
         $this->status = $status;
     }
 
+    public function setVerifiedAt(string $verified_at): void {
+        $this->verified_at = $verified_at;
+    }
+
     public function setCreatedAt(string $created_at): void {
         $this->created_at = $created_at;
     }
 
-    public function setLastUpdated(string $last_updated): void {
-        $this->last_updated = $last_updated;
+    public function setLastUpdated(string $deleted_at): void {
+        $this->deleted_at = $deleted_at;
     }
 }

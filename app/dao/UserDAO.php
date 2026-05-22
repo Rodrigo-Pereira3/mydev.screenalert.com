@@ -172,8 +172,8 @@ class UserDAO
     }
 
     public function getMessages(): array
-{
-    $sql = "SELECT 
+    {
+        $sql = "SELECT 
         m.id AS id_message,
         m.id_user AS id_paciente,
         m.status AS status,
@@ -183,50 +183,50 @@ class UserDAO
     FROM messages m
     INNER JOIN users u ON m.id_user = u.id
     WHERE u.id_cuidador IS NOT NULL";
-    
-    $stmt = $this->conn->query($sql);
-    $messages = [];
 
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $messages[] = new Message(
-            $row['id_message'],
-            $row['id_paciente'],
-            $row['status'],
-            $row['data_enviada'],
-            $row['texto_mensagem'],
-            $row['nome_paciente']   // novo campo
-        );
+        $stmt = $this->conn->query($sql);
+        $messages = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $messages[] = new Message(
+                $row['id_message'],
+                $row['id_paciente'],
+                $row['status'],
+                $row['data_enviada'],
+                $row['texto_mensagem'],
+                $row['nome_paciente']   // novo campo
+            );
+        }
+
+        return $messages;
     }
-
-    return $messages;
-}
     public function getDevices(): array
-{
-    $sql = "SELECT 
+    {
+        $sql = "SELECT 
         d.id AS id_device,
         d.id_user AS id_paciente,
         d.token_device AS token
     FROM screen_alert_displays d
     INNER JOIN users u ON d.id_user = u.id
     WHERE u.id_cuidador IS NOT NULL";
-    
-    $stmt = $this->conn->query($sql);
-    $devices = [];
 
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $devices[] = new Device(
-            $row['id_device'],
-            $row['id_paciente'],
-            $row['token']
-        );
+        $stmt = $this->conn->query($sql);
+        $devices = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $devices[] = new Device(
+                $row['id_device'],
+                $row['id_paciente'],
+                $row['token']
+            );
+        }
+
+        return $devices;
     }
 
-    return $devices;
-}
-
-public function findByEmailAPP(string $email): ?User
+    public function findByEmailAPP(string $email): ?User
     {
-        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password_email, status, created_at, last_updated 
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, verified_at, created_at, deleted_at
         FROM users 
         WHERE email = :email AND is_admin = 0 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -234,7 +234,7 @@ public function findByEmailAPP(string $email): ?User
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
+ var_dump($row);
         if ($row) {
             return new User(
                 $row['id'],
@@ -243,15 +243,30 @@ public function findByEmailAPP(string $email): ?User
                 $row['name_user'],
                 $row['birth_date'],
                 $row['email'],
-                $row['password_email'],
+                $row['password'],
                 $row['status'],
+                $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['last_updated']
+                $row['deleted_at'] ?? '',
             );
         }
 
         return null;
     }
+
+    public function createPending(string $username, string $birth_date, string $email,  string $password): int
+    {
+        $sql = "
+        INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, verified_at, created_at, deleted_at)
+        VALUES (NULL, 0, ?, ?, ?, ?, 'Active', NULL, NOW(), NULL)
+    ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$username, $birth_date, $email, $password]);
+
+        return (int) $this->conn->lastInsertId();
+    }
+
 
 
 }
