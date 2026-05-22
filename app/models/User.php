@@ -132,4 +132,21 @@ class User {
     public function setLastUpdated(string $deleted_at): void {
         $this->deleted_at = $deleted_at;
     }
+
+    //vou implementar um toArray
+    public function toArray(): array {
+        return [
+            'id' => $this->id,
+            'id_cuidador' => $this->id_cuidador,
+            'is_admin' => $this->is_admin,
+            'name_user' => $this->name_user,
+            'birth_date' => $this->birth_date,
+            'email' => $this->email,
+            'password' => $this->password,
+            'status' => $this->status,
+            'verified_at' => $this->verified_at,
+            'created_at' => $this->created_at,
+            'deleted_at' => $this->deleted_at
+        ];
+    }
 }

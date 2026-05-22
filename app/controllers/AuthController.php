@@ -1,10 +1,11 @@
 <?php
 
-require __DIR__ . '/../dao/UserDAO.php';
+require_once __DIR__ . '/../dao/UserDAO.php';
 require_once __DIR__ . "/../config/DatabaseSingle.php";
-require_once __DIR__ ."/../utils/Utils.php";
-require __DIR__ . '/../dao/EmailVerificationDAO.php';
+require_once __DIR__ . "/../utils/Utils.php";
+require_once __DIR__ . '/../dao/EmailVerificationDAO.php';
 require_once __DIR__ . "/../services/MyMailerService.php";
+require_once __DIR__ . "/../config/jwt.php";
 
 
 use Firebase\JWT\JWT;
@@ -22,6 +23,7 @@ class AuthController
 
         require __DIR__ . '/../../public/views/' . $name . '.php';
     }
+
     public function loginWeb()
     {
         //var_dump("Estou no login a validar os dados");
@@ -124,7 +126,8 @@ class AuthController
                 throw new Exception("Já existe uma conta com esse email.");
             }
 
-            $userId = $userDAO->createPending($username, $birth_date, $email, $password);
+            $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+            $userId = $userDAO->createPending($username, $birth_date, $email, $passwordHash);
 
             $verifyDAO = new EmailVerificationDAO();
             $token = $verifyDAO->createForUser($userId, 600);
@@ -158,7 +161,7 @@ class AuthController
             Utils::jsonResponse($responseData, 200);
         } catch (Exception $e) {
             $pdo->rollBack();
-            
+
             $responseData = [
                 'success' => false,
                 'message' => 'Erro no signup: ' . $e->getMessage(),
@@ -169,5 +172,66 @@ class AuthController
         }
     }
 
+    public function loginApi()
+    {
+        $pdo = DatabaseSingle::connect();
 
+        $pdo->beginTransaction();
+        try {
+            $email = trim($_POST['email'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+
+            if ($email === '' || $password === '') {
+                throw new Exception("Todos os campos são obrigatórios.");
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Email inválido.");
+            }
+
+            $user = (new UserDAO())->findByEmailAPP($email);
+
+            if (!$user || !password_verify($password, $user->getPassword())) {
+                echo json_encode(["error" => "login inválido"]);
+                return;
+            }
+
+            $payload = [
+                "iat" => time(),
+                "exp" => time() + 3600,
+                "data" => [
+                    "id" => $user->getId(),
+                    "role" => $user->getIsAdmin()
+                ]
+            ];
+
+            $jwt = JWT::encode($payload, JwtConfig::$secret, 'HS256');
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Login realizado com sucesso',
+                'data' => [
+                    'user' => $user->toArray(),
+                    'jwt' => $jwt
+                ],
+            ];
+
+            $pdo->commit();
+
+            Utils::jsonResponse($responseData, 200);
+
+        } catch (Exception $e) {
+            $pdo->rollBack();
+
+            $responseData = [
+                'success' => false,
+                'message' => 'Erro no login: ' . $e->getMessage(),
+                'data' => [],
+            ];
+
+            Utils::jsonResponse($responseData, 400);
+        }
+
+
+    }
 }

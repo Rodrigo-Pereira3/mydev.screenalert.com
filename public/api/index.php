@@ -21,6 +21,10 @@ elseif ($uri === "/signup" && $method === 'POST') {
   (new AuthController())->signupApi();
 }
 
+elseif ($uri === "/login" && $method === 'POST') {
+  (new AuthController())->loginApi();
+}
+
 else {
   $dataResponse = [
     'success' => false,
