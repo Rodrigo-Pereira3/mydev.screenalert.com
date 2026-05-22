@@ -17,7 +17,7 @@ class UserDAO
 
     public function findByEmail(string $email): ?User
     {
-        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password_email, status, created_at, last_updated 
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, verified_at, created_at, deleted_at
         FROM users 
         WHERE email = :email AND is_admin = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -34,10 +34,11 @@ class UserDAO
                 $row['name_user'],
                 $row['birth_date'],
                 $row['email'],
-                $row['password_email'],
+                $row['password'],
                 $row['status'],
+                $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['last_updated']
+                $row['deleted_at'] ?? ''
             );
         }
 
@@ -69,10 +70,11 @@ class UserDAO
                 $row['name_user'],
                 $row['birth_date'],
                 $row['email'],
-                $row['password_email'],
+                $row['password'],
                 $row['status'],
+                $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['last_updated']
+                $row['deleted_at'] ?? ''
             );
         }
 
@@ -95,10 +97,11 @@ class UserDAO
                 $row['name_user'],
                 $row['birth_date'],
                 $row['email'],
-                $row['password_email'],
+                $row['password'],
                 $row['status'],
+                $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['last_updated']
+                $row['deleted_at'] ?? ''
             );
         }
 
@@ -122,10 +125,11 @@ class UserDAO
                 $row['name_user'],
                 $row['birth_date'],
                 $row['email'],
-                $row['password_email'],
+                $row['password'],
                 $row['status'],
+                $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['last_updated']
+                $row['deleted_at'] ?? ''
             );
         }
 
@@ -234,7 +238,7 @@ class UserDAO
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
- var_dump($row);
+ 
         if ($row) {
             return new User(
                 $row['id'],
@@ -267,6 +271,7 @@ class UserDAO
         return (int) $this->conn->lastInsertId();
     }
 
+   
 
 
 }

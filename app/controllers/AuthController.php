@@ -55,7 +55,7 @@ class AuthController
 
 
         // Utilizador foi encontrado - verificar password
-        if (password_verify($password, $user->getPasswordEmail())) {
+        if (password_verify($password, $user->getPassword())) {
             //var_dump("Password correta");
             $_SESSION['token'] = [
                 'id' => $user->getId(),
