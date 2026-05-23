@@ -19,8 +19,8 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Status</th>
-                        <th>Registered</th>
-                        <th>Last Login</th>
+                        <th>Created</th>
+                        <th>Verified</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -52,8 +52,8 @@
                             <?php endif; ?>
                         
                         </td>
-                        <td>2024-01-10</td>
-                        <td>2024-02-20 14:32</td>
+                        <td><?= $user->getCreatedAt() ?></td>
+                        <td><?= $user->getVerifiedAt() ?></td>
                         <td>
                             <a href="/users/<?= $user->getId() ?>/edit" class="btn btn-sm btn-warning edit-btn"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-sm btn-danger delete-btn"><i class="fa-solid fa-trash"></i></button>
