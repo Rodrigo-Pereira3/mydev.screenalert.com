@@ -24,6 +24,7 @@ class AuthController
         require __DIR__ . '/../../public/views/' . $name . '.php';
     }
 
+    //Este é o metodo que processa o login da nossa WEB.
     public function loginWeb()
     {
         //var_dump("Estou no login a validar os dados");
@@ -85,6 +86,7 @@ class AuthController
 
     }
 
+    //Este é o metodo que processa o logout da nossa WEB.
     public function logoutWeb()
     {
         unset($_SESSION['token']);
@@ -99,7 +101,7 @@ class AuthController
     }
 
 
-    // APP
+    //Este é o metodo que processa o signup da nossa APP.
     public function signupApi()
     {
         $pdo = DatabaseSingle::connect();
@@ -172,6 +174,7 @@ class AuthController
         }
     }
 
+    //Este é o metodo verifica o email do user.
     public function verifyEmailForm(): void
     {
         $token = $_GET['token'] ?? '';
@@ -184,6 +187,7 @@ class AuthController
         (new WebController())->verifyEmail($token);
     }
 
+    //Este é o metodo que processa a submissão do form de verificação do email, onde o user define a password.
     public function verifyEmailSubmit(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE)
@@ -216,6 +220,7 @@ class AuthController
         exit;
     }
 
+    //Este é o metodo que processa o login da nossa APP.
     public function loginApi()
     {
         $pdo = DatabaseSingle::connect();

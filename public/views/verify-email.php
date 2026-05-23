@@ -30,7 +30,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     </form>
 
     <p class="text-muted small mt-3 mb-0">
-      O link expira em 5 minutos. Se expirar, pede um novo link.
+      O link expira em 5 minutos. Se expirar, por favor solicite um novo link e no mínimo aceitamos 6 caracteres.
     </p>
   </div>
 

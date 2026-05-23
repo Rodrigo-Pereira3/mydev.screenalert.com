@@ -14,7 +14,7 @@
                 <p class="text-muted">No caregiver found for this patient.</p>
             <?php endif; ?>
 
-            <a href="/messages" class="btn btn-secondary mt-2">Back</a>
+            
         </div>
     </div>
 

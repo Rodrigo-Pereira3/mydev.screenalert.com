@@ -7,16 +7,19 @@ class WebController
         require_once __DIR__ . "/../../public/views/{$viewName}.php";
     }
 
+    //Isso nos dirige para a página Home.
     public function index()
     {
         $this->view('home');
     }
 
+    //Isso nos dirige para a página de Login.
     public function login()
     {
         $this->view('login');
     }
 
+    //Isso nos dirige para a página de Dashboard e mostra os dados de contagem de users, pacientes, devices e alerts.
     public function dashboard()
     {
         $usersCount = (new UserDAO())->getUsersCount();
@@ -31,6 +34,7 @@ class WebController
         ]);
     }
 
+    //Isso nos dirige para a página de Users e mostra a lista de users.
     public function users()
     {
         $users = (new UserDAO())->getUsers();
@@ -38,6 +42,7 @@ class WebController
         $this->view('users', ['users' => $users]);
     }
 
+    //Isso nos dirige para a página de Pacientes e mostra a lista de pacientes associados ao cuidador.
     public function getPacientes($userId)
     {
         $user = (new UserDAO())->findById($userId);
@@ -49,6 +54,7 @@ class WebController
         ]);
     }
 
+    //Isso nos dirige para a página de Cuidador e mostra os dados do cuidador associado ao paciente.
     public function getCuidador($userId)
     {
         $user = (new UserDAO())->findById($userId);
