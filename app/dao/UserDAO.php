@@ -17,7 +17,7 @@ class UserDAO
 
     public function findByEmail(string $email): ?User
     {
-        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, verified_at, created_at, deleted_at
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at
         FROM users 
         WHERE email = :email AND is_admin = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -36,6 +36,7 @@ class UserDAO
                 $row['email'],
                 $row['password'],
                 $row['status'],
+                $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
                 $row['deleted_at'] ?? ''
@@ -72,6 +73,7 @@ class UserDAO
                 $row['email'],
                 $row['password'],
                 $row['status'],
+                $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
                 $row['deleted_at'] ?? ''
@@ -99,6 +101,7 @@ class UserDAO
                 $row['email'],
                 $row['password'],
                 $row['status'],
+                $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
                 $row['deleted_at'] ?? ''
@@ -127,6 +130,7 @@ class UserDAO
                 $row['email'],
                 $row['password'],
                 $row['status'],
+                $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
                 $row['deleted_at'] ?? ''
@@ -230,7 +234,7 @@ class UserDAO
 
     public function findByEmailAPP(string $email): ?User
     {
-        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, verified_at, created_at, deleted_at
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at
         FROM users 
         WHERE email = :email AND is_admin = 0 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -238,7 +242,7 @@ class UserDAO
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
- 
+
         if ($row) {
             return new User(
                 $row['id'],
@@ -249,6 +253,7 @@ class UserDAO
                 $row['email'],
                 $row['password'],
                 $row['status'],
+                $row['is_verified'] ?? false,
                 $row['verified_at'] ?? '',
                 $row['created_at'],
                 $row['deleted_at'] ?? '',
@@ -258,11 +263,11 @@ class UserDAO
         return null;
     }
 
-    public function createPending(string $username, string $birth_date, string $email,  string $password): int
+    public function createPending(string $username, string $birth_date, string $email, string $password): int
     {
         $sql = "
-        INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, verified_at, created_at, deleted_at)
-        VALUES (NULL, 0, ?, ?, ?, ?, 'Active', NULL, NOW(), NULL)
+        INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at)
+        VALUES (NULL, 0, ?, ?, ?, ?, 'Active', 0, NULL, NOW(), NULL)
     ";
 
         $stmt = $this->conn->prepare($sql);
@@ -271,7 +276,16 @@ class UserDAO
         return (int) $this->conn->lastInsertId();
     }
 
-   
+    public function setPasswordAndVerify(int $userId, string $hashedPassword): void
+    {
+        $sql = "UPDATE users 
+            SET password = ?, is_verified = 1, verified_at = NOW() 
+            WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$hashedPassword, $userId]);
+    }
+
+
 
 
 }

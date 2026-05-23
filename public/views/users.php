@@ -53,7 +53,11 @@
                         
                         </td>
                         <td><?= $user->getCreatedAt() ?></td>
-                        <td><?= $user->getVerifiedAt() ?></td>
+                        <td><?php if ($user->getIsVerified()): ?>
+                                <i class="fa-solid fa-check"></i>
+                            <?php else: ?>
+                                <i class="fa-regular fa-circle"></i>
+                            <?php endif; ?></td>
                         <td>
                             <a href="/users/<?= $user->getId() ?>/edit" class="btn btn-sm btn-warning edit-btn"><i class="fa-solid fa-pen-to-square"></i></a>
                             <button class="btn btn-sm btn-danger delete-btn"><i class="fa-solid fa-trash"></i></button>

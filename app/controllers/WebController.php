@@ -82,6 +82,11 @@ class WebController
         $this->view('signup');
     }
 
+    public function verifyEmail(string $token): void
+    {
+        $this->view("verify-email", ["token" => $token]);
+    }
+
     public function badRequest()
     {
         http_response_code(400);

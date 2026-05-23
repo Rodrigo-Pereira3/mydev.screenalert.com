@@ -126,8 +126,8 @@ class AuthController
                 throw new Exception("Já existe uma conta com esse email.");
             }
 
-            $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-            $userId = $userDAO->createPending($username, $birth_date, $email, $passwordHash);
+            
+            $userId = $userDAO->createPending($username, $birth_date, $email, $password);
 
             $verifyDAO = new EmailVerificationDAO();
             $token = $verifyDAO->createForUser($userId, 600);
@@ -170,6 +170,50 @@ class AuthController
 
             Utils::jsonResponse($responseData, 400);
         }
+    }
+
+    public function verifyEmailForm(): void
+    {
+        $token = $_GET['token'] ?? '';
+        if ($token === '') {
+            http_response_code(400);
+            echo "Token em falta.";
+            return;
+        }
+
+        (new WebController())->verifyEmail($token);
+    }
+
+    public function verifyEmailSubmit(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE)
+            session_start();
+
+        $token = (string) ($_POST['token'] ?? '');
+        $password = (string) ($_POST['password'] ?? '');
+
+        if ($token === '' || $password === '')
+            throw new Exception("Token e password são obrigatórios.");
+        if (strlen($password) < 6)
+            throw new Exception("Password deve ter pelo menos 6 caracteres.");
+
+        $verDao = new EmailVerificationDAO();
+        $userId = $verDao->validate($token);
+
+        if (!$userId) {
+            throw new Exception("Link inválido ou expirado (5 min). Pede um novo.");
+        }
+
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+        $userDao = new UserDAO();
+        $userDao->setPasswordAndVerify($userId, $hash);
+
+        $verDao->markUsed($token);
+
+        $_SESSION['flash_success'] = "Email verificado e password definida. Já podes fazer login.";
+        header("Location: /login");
+        exit;
     }
 
     public function loginApi()

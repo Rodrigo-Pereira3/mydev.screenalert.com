@@ -14,8 +14,8 @@ class EmailVerificationDAO
 
   public function createForUser(int $userId, int $ttlSeconds = 300): string
   {
-    $token = bin2hex(random_bytes(32));     
-    $tokenHash = hash('sha256', $token);    
+    $token = bin2hex(random_bytes(32));
+    $tokenHash = hash('sha256', $token);
 
     $sql = "
       INSERT INTO email_verifications (id_user, token_hash, expires_at, used_at, created_at)
@@ -26,6 +26,35 @@ class EmailVerificationDAO
     $stmt->execute([$userId, $tokenHash, $ttlSeconds]);
 
     return $token;
+  }
+
+  public function validate(string $token): ?int
+  {
+    $tokenHash = hash('sha256', $token);
+
+    $sql = "
+      SELECT id_user
+      FROM email_verifications
+      WHERE token_hash = ?
+        AND used_at IS NULL
+        AND expires_at > NOW()
+      ORDER BY id DESC
+      LIMIT 1
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tokenHash]);
+
+    $userId = $stmt->fetchColumn();
+    return $userId ? (int) $userId : null;
+  }
+
+  public function markUsed(string $token): void
+  {
+    $tokenHash = hash('sha256', $token);
+
+    $stmt = $this->conn->prepare("UPDATE email_verifications SET used_at = NOW() WHERE token_hash = ?");
+    $stmt->execute([$tokenHash]);
   }
 
 }

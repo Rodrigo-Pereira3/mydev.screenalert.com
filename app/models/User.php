@@ -10,6 +10,7 @@ class User {
     private string $email;
     private string $password;
     private string $status; 
+    private bool $is_verified;
     private string $verified_at;
     private string $created_at;
     private string $deleted_at;
@@ -24,6 +25,7 @@ class User {
         string $email = '',
         string $password = '',
         string $status = 'Active',
+        bool $is_verified = false,
         string $verified_at = '',
         string $created_at = '',
         string $deleted_at = ''
@@ -36,6 +38,7 @@ class User {
         $this->email = $email;
         $this->password = $password;    
         $this->status = $status;
+        $this->is_verified = $is_verified;
         $this->verified_at = $verified_at;
         $this->created_at = $created_at;
         $this->deleted_at = $deleted_at;
@@ -73,6 +76,10 @@ class User {
 
     public function getStatus(): string {
         return $this->status;
+    }
+
+    public function getIsVerified(): bool {
+        return $this->is_verified;
     }
 
     public function getVerifiedAt(): string {
@@ -121,6 +128,10 @@ class User {
         $this->status = $status;
     }
 
+    public function setIsVerified(bool $is_verified): void {
+        $this->is_verified = $is_verified;
+    }
+
     public function setVerifiedAt(string $verified_at): void {
         $this->verified_at = $verified_at;
     }
@@ -144,6 +155,7 @@ class User {
             'email' => $this->email,
             'password' => $this->password,
             'status' => $this->status,
+            'is_verified' => $this->is_verified,
             'verified_at' => $this->verified_at,
             'created_at' => $this->created_at,
             'deleted_at' => $this->deleted_at

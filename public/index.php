@@ -121,6 +121,21 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 }
 
 
+elseif ($uri === '/verify-email' && $method === 'GET') {
+    (new AuthController())->verifyEmailForm();
+}
+
+elseif ($uri === '/verify-email' && $method === 'POST') {
+    try {
+        (new AuthController())->verifyEmailSubmit();
+    } catch (Exception $e) {
+        $_SESSION['flash_error'] = $e->getMessage();
+        header("Location: /verify-email?token=" . urlencode($_POST['token'] ?? ''));
+        exit;
+    }
+}
+
+
 
 else {
     echo "Página não encontrada";
