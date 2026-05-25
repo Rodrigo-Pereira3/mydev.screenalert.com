@@ -2,6 +2,7 @@
 require __DIR__ . "/../../vendor/autoload.php";
 
 require "../../app/controllers/AuthController.php";
+require "../../app/controllers/UserController.php";
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -14,22 +15,29 @@ $method = $_SERVER["REQUEST_METHOD"];
 
 
 if (($uri === "/" || $uri === "/index") && $method === 'GET') {
+
   die('sdsdc');
-}
 
-elseif ($uri === "/signup" && $method === 'POST') {
+} elseif ($uri === "/signup" && $method === 'POST') {
+
   (new AuthController())->signupApi();
-}
 
-elseif ($uri === "/login" && $method === 'POST') {
+} elseif ($uri === "/login" && $method === 'POST') {
+
   (new AuthController())->loginApi();
-}
 
-else {
+} elseif ($uri === "/users/profile" && $method === 'GET') {
+
+  $tokenDecoded = AuthController::requireAuth();
+  //var_dump($tokenDecoded);
+
+  (new UserController())->listProfileApi($tokenDecoded->data->id);
+
+} else {
   $dataResponse = [
     'success' => false,
     'message' => 'Not found.',
-    'data'    => []
+    'data' => []
   ];
 
   Utils::jsonResponse($dataResponse, 401);
