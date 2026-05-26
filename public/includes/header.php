@@ -38,7 +38,9 @@
                 <a href="/devices" class="list-group-item list-group-item-action">Devices</a>
                 <a href="/views/logs.php" class="list-group-item list-group-item-action">Logs</a>
                 <a href="/views/schedules.php" class="list-group-item list-group-item-action">Schedules</a>
+                <a href="/views/signup.php" class="list-group-item list-group-item-action">Sign Up</a>
                 <form action="/logout" method="POST" style="display:inline;">
+
                     <button type="submit">Logout</button>
                 </form>
             </div>

@@ -4,7 +4,7 @@ class DataBase {
     private $host = "localhost";
     private $db_name = "sa_system";
     private $username = "root";
-    private $password = "";
+    private $password = "1234";
 
     public function connect() {
 

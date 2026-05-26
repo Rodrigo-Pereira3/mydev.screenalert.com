@@ -115,7 +115,9 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->devices();
     }
 
-}elseif ($uri === '/logout' && $method === 'POST') {
+} elseif ($uri === '/signup' && $method === 'POST') {
+    (new AuthController())->signupWeb();
+} elseif ($uri === '/logout' && $method === 'POST') {
     (new AuthController())->logoutWeb();
 
 }

@@ -154,6 +154,50 @@ class AuthController
 
     }
 
+
+    public function signupWeb() {
+    /**
+     * @TODO Validar se existe user logado
+     */
+    $username = trim($_POST['username']) ?? '';
+    $email = trim($_POST['email']) ?? '';
+    $password = trim($_POST['password']) ?? '';
+    $birth_date = $_POST['birth_date'] ?? '';
+
+    if($username === '' || $email === '') {
+      throw new Exception("Username e email são obrigatórios");
+    }
+
+    if(! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      throw new Exception("Dados inválidos");
+    }
+
+    // Verificar se email já existe
+    $user = (new UserDAO())->findByEmail($email);
+
+    var_dump($user);
+    if($user) {
+      throw new Exception("Email já existe");
+    }
+    // User no estado pendente
+    $userId = (new UserDAO())->createPending($username, $birth_date, $email, $password);
+    
+    // Criar token de verificação
+    $verDAO = new EmailVerificationDAO();
+
+    $token = $verDAO->createForUser($userId, 300);
+
+    // 3) baseUrl dinâmico (vhosts)
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $baseUrl = $scheme . '://' . $host;
+
+    // 6) redirect com toast
+    $_SESSION['flash_success'] = "Conta criada. Enviámos um email para verificares (link expira em 5 min).";
+    header("Location: /login");
+    exit;
+
+  }
     //Este é o metodo que processa o logout da nossa WEB.
     public function logoutWeb()
     {
