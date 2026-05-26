@@ -22,9 +22,11 @@ class UserController
         'success' => true,
         'message' => "Operação realizada com sucesso",
         'data'    => [
-          'user' => $user->getNameUser(),
-          'email'=> $user->getEmail(),
-          'birth_date' => $user->getBirthDate()
+          'user' => [
+            'id' => $user->getId(),
+            'name_user' => $user->getNameUser(),
+            'email' => $user->getEmail()
+          ]
         ]
       ];
 
