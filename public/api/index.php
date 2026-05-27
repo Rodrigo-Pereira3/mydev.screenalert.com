@@ -39,7 +39,11 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
   $tokenDecoded = AuthController::requireAuth();
   (new AuthController())->getPacientesApi($tokenDecoded->data->id);
   
-} else {
+}  
+
+// fazer /paciente aqui e vai ser POST
+
+else {
   $dataResponse = [
     'success' => false,
     'message' => 'Not found.',
