@@ -2,6 +2,7 @@
 require __DIR__ . "/../../vendor/autoload.php";
 
 require "../../app/controllers/AuthController.php";
+require "../../app/controllers/WebController.php";
 require "../../app/controllers/UserController.php";
 
 use Firebase\JWT\JWT;
@@ -33,6 +34,11 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
   (new UserController())->listProfileApi($tokenDecoded->data->id);
 
+} elseif ($uri === '/cuidador/pacientes' && $method === 'GET') {
+
+  $tokenDecoded = AuthController::requireAuth();
+  (new AuthController())->getPacientesApi($tokenDecoded->data->id);
+  
 } else {
   $dataResponse = [
     'success' => false,
