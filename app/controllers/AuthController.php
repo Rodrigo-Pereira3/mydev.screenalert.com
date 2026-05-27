@@ -399,20 +399,41 @@ class AuthController
 
     public function getPacientesApi(int $userId): void
     {
-        $user = (new UserDAO())->findById($userId);
-        $pacientes = (new UserDAO())->getPacientesByCuidadorId($userId);
+        $pdo = DatabaseSingle::connect();
 
-        $responseData = [
-            'success' => true,
-            'message' => 'Pacientes encontrados',
-            'data' => [
-                'user' => [$user->getNameUser(),
-                          $user->getEmail(),
-                          $user->getBirthDate()],
-                'pacientes' => array_map(fn($p) => $p->toArray(), $pacientes)
-            ]
-        ];
+        $pdo->beginTransaction();
+        try {
+            $user = (new UserDAO())->findById($userId);
+            $pacientes = (new UserDAO())->getPacientesByCuidadorId($userId);
 
-        Utils::jsonResponse($responseData, 200);
+            $pacientesArray = [];
+            foreach ($pacientes as $p) {
+                $pacientesArray[] = $p->toArray();
+            }
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Pacientes encontrados',
+                'data' => [
+                    'user' => [ $user->getNameUser(),
+                                $user->getEmail(),
+                                $user->getBirthDate() ],
+                    'pacientes' => $pacientesArray
+                ]
+            ];
+
+            Utils::jsonResponse($responseData, 200);
+
+        } catch (Exception $e) {
+            $pdo->rollBack();
+
+            $responseData = [
+                'success' => false,
+                'message' => 'Erro ao carregar pacientes',
+                'data' => [],
+            ];
+
+            Utils::jsonResponse($responseData, 400);
+        }
     }
 }
