@@ -285,7 +285,23 @@ class UserDAO
         $stmt->execute([$hashedPassword, $userId]);
     }
 
+    public function createPendingWithCuidador(
+        string $username,
+        string $birth_date,
+        string $email,
+        string $password,
+        int $cuidadorId
+    ): int {
+        $sql = "
+        INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at)
+        VALUES (?, 0, ?, ?, ?, ?, 'Active', 0, NULL, NOW(), NULL)
+    ";
 
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$cuidadorId, $username, $birth_date, $email, $password]);
+
+        return (int) $this->conn->lastInsertId();
+    }
 
 
 }

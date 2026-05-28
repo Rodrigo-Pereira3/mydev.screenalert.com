@@ -4,6 +4,8 @@ require __DIR__ . "/../../vendor/autoload.php";
 require "../../app/controllers/AuthController.php";
 require "../../app/controllers/WebController.php";
 require "../../app/controllers/UserController.php";
+require "../../app/controllers/PacienteController.php";
+require "../../app/middleware/AuthMiddleware.php";
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -37,25 +39,28 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 } elseif ($uri === '/cuidador/pacientes' && $method === 'GET') {
 
   $tokenDecoded = AuthController::requireAuth();
-  (new AuthController())->getPacientesApi($tokenDecoded->data->id);
+
+  (new PacienteController())->getPacientesApi($tokenDecoded->data->id);
+  
+} elseif ($uri === '/paciente/add' && $method === 'POST') {
+    AuthMiddleware::check();
+    $tokenDecoded = AuthController::requireAuth();
+    
+    (new PacienteController())->addPacienteApi($tokenDecoded);
+
   
 }  
 
 elseif ($uri === '/cuidador/pacientes/(+d)' && $method === 'GET') {
 // pagina details do paciente por id
   $tokenDecoded = AuthController::requireAuth();
-  (new AuthController())->getPacienteByIdApi($tokenDecoded->data->id, $uri);
+  (new PacienteController())->getPacienteHome($tokenDecoded->data->id, $uri);
   
 }
 
-// fazer /paciente aqui e vai ser POST
 
- elseif ($uri === '/pacientes' && $method === 'POST') {
-//
-  $tokenDecoded = AuthController::requireAuth();
-  (new AuthController())->addPacientesApi($tokenDecoded->data->id);
+
   
-}  
 
 else {
   $dataResponse = [
