@@ -437,7 +437,7 @@ class AuthController
         }
     }
 
-    public function pacientesApi(int $userId): void
+    public function addPacientesApi(int $userId): void
     {
         $pdo = DatabaseSingle::connect();
 

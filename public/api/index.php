@@ -41,12 +41,19 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
   
 }  
 
+elseif ($uri === '/cuidador/pacientes/(+d)' && $method === 'GET') {
+// pagina details do paciente por id
+  $tokenDecoded = AuthController::requireAuth();
+  (new AuthController())->getPacienteByIdApi($tokenDecoded->data->id, $uri);
+  
+}
+
 // fazer /paciente aqui e vai ser POST
 
  elseif ($uri === '/pacientes' && $method === 'POST') {
-
+//
   $tokenDecoded = AuthController::requireAuth();
-  (new AuthController())->pacientesApi($tokenDecoded->data->id);
+  (new AuthController())->addPacientesApi($tokenDecoded->data->id);
   
 }  
 
