@@ -21,7 +21,6 @@
                         <th>Status</th>
                         <th>Created</th>
                         <th>Verified</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="userTable">
@@ -58,15 +57,6 @@
                                 <?php else: ?>
                                     <i class="fa-regular fa-circle"></i>
                                 <?php endif; ?>
-                            </td>
-                            <td>
-                                <form action="/clientes/delete" method="POST">
-                                    <input type="hidden" name="id" value="<?= $user->getId() ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Deseja apagar este cliente?');">
-                                        🗑
-                                    </button>
-                                </form> <!-- ← faltava este -->
                             </td>
                         </tr>
                     <?php endforeach; ?>

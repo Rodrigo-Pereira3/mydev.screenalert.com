@@ -92,15 +92,7 @@ class WebController
     {
         $this->view("verify-email", ["token" => $token]);
     }
-
-    public function deleteUser($userId)
-    {
-        (new UserDAO())->deleteUser($userId);
-
-        header('Location: /users');
-        exit;
-    }
-
+    
     public function badRequest()
     {
         http_response_code(400);
