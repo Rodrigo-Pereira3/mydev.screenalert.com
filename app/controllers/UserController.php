@@ -13,15 +13,16 @@ class UserController
     require __DIR__ . "/../../public/views/{$name}.php";
   }
 
-  public function listProfileApi($userId) {
-    
+  public function listProfileApi($userId)
+  {
+
     try {
       $user = (new UserDao())->findById($userId);
 
       $dataResponse = [
         'success' => true,
         'message' => "Operação realizada com sucesso",
-        'data'    => [
+        'data' => [
           'user' => [
             'id' => $user->getId(),
             'name_user' => $user->getNameUser(),
@@ -37,7 +38,7 @@ class UserController
       $dataResponse = [
         'success' => false,
         'message' => $e->getMessage(),
-        'data'    => []
+        'data' => []
       ];
 
       Utils::jsonResponse($dataResponse, 401);
@@ -45,35 +46,4 @@ class UserController
       exit;
     }
   }
-
-  public function deleteUserApi($userId)
-{
-    try {
-        $deleted = (new UserDAO())->deleteById((int) $userId);
-
-        if (!$deleted) {
-            Utils::jsonResponse([
-                'success' => false,
-                'message' => 'Utilizador não encontrado ou já apagado.',
-                'data'    => []
-            ], 404);
-            exit;
-        }
-
-        Utils::jsonResponse([
-            'success' => true,
-            'message' => 'Utilizador apagado com sucesso.',
-            'data'    => []
-        ]);
-        exit;
-
-    } catch (Exception $e) {
-        Utils::jsonResponse([
-            'success' => false,
-            'message' => $e->getMessage(),
-            'data'    => []
-        ], 500);
-        exit;
-    }
-}
 }

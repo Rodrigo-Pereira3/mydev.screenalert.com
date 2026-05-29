@@ -26,43 +26,49 @@
                 </thead>
                 <tbody id="userTable">
                     <?php foreach ($users as $user): ?>
-                    <tr>
-                        <td><?= $user->getId() ?></td>
-                        <td>
-                            <?php if ($user->getIsAdmin()): ?>
-                                <i class="fa-solid fa-user"></i>
-                            <?php else: ?>
-                                <i class="fa-regular fa-user"></i>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if ($user->getIdCuidador() === null && ! $user->getIsAdmin()): ?>
-                                <a href="/cuidador/<?= $user->getId() ?>/pacientes" >
-                                    <i class="fa-solid fa-user-nurse"></i>
-                                </a>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= $user->getNameUser() ?></td>
-                        <td><?= $user->getEmail() ?></td>
-                        <td>
-                            <?php if ($user->getStatus() === 'Active'): ?>
-                                <span class="badge bg-success"><?= $user->getStatus() ?></span>
-                            <?php else: ?>
-                                <span class="badge bg-danger"><?= $user->getStatus() ?></span>
-                            <?php endif; ?>
-                        
-                        </td>
-                        <td><?= $user->getCreatedAt() ?></td>
-                        <td><?php if ($user->getIsVerified()): ?>
-                                <i class="fa-solid fa-check"></i>
-                            <?php else: ?>
-                                <i class="fa-regular fa-circle"></i>
-                            <?php endif; ?></td>
-                        <td>
-                            <a href="/users/<?= $user->getId() ?>/edit" class="btn btn-sm btn-warning edit-btn"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <button class="btn btn-sm btn-danger delete-btn"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?= $user->getId() ?></td>
+                            <td>
+                                <?php if ($user->getIsAdmin()): ?>
+                                    <i class="fa-solid fa-user"></i>
+                                <?php else: ?>
+                                    <i class="fa-regular fa-user"></i>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($user->getIdCuidador() === null && !$user->getIsAdmin()): ?>
+                                    <a href="/cuidador/<?= $user->getId() ?>/pacientes">
+                                        <i class="fa-solid fa-user-nurse"></i>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $user->getNameUser() ?></td>
+                            <td><?= $user->getEmail() ?></td>
+                            <td>
+                                <?php if ($user->getStatus() === 'Active'): ?>
+                                    <span class="badge bg-success"><?= $user->getStatus() ?></span>
+                                <?php else: ?>
+                                    <span class="badge bg-danger"><?= $user->getStatus() ?></span>
+                                <?php endif; ?>
+
+                            </td>
+                            <td><?= $user->getCreatedAt() ?></td>
+                            <td><?php if ($user->getIsVerified()): ?>
+                                    <i class="fa-solid fa-check"></i>
+                                <?php else: ?>
+                                    <i class="fa-regular fa-circle"></i>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <form action="/clientes/delete" method="POST">
+                                    <input type="hidden" name="id" value="<?= $user->getId() ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Deseja apagar este cliente?');">
+                                        🗑
+                                    </button>
+                                </form> <!-- ← faltava este -->
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>

@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 require "../app/controllers/WebController.php";
 require "../app/controllers/AuthController.php";
@@ -39,7 +40,7 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
             'type' => 'error',
             'message' => 'Não tem acesso a esta página. 
         Por favor, faça login primeiro.'
-        ];  
+        ];
         header("Location: /login");
         exit;
     } else {
@@ -52,7 +53,7 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
             'type' => 'error',
             'message' => 'Não tem acesso a esta página. 
         Por favor, faça login primeiro.'
-        ];  
+        ];
         header("Location: /login");
         exit;
     } else {
@@ -60,20 +61,28 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->getPacientes($matches[1]);
     }
 
-}elseif (preg_match('/\/users\/(\d+)\/delete/', $uri, $matches) && $method === 'DELETE') {
+} elseif ($uri === '/clientes/delete' && $method === "POST") {
+
     if (!$isLogin) {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Não autorizado.']);
-        exit;
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Acesso negado. Faça login para continuar.'
+        ];
+
+        header("Location: /login");
+        exit();
     }
-    (new UserController())->deleteUserApi($matches[1]);
+
+    $userId = $_POST['id'];
+
+    (new WebController())->deleteUser($userId);
 } elseif (preg_match('/\/paciente\/(\d+)\/cuidador/', $uri, $matches) && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
             'type' => 'error',
             'message' => 'Não tem acesso a esta página. 
         Por favor, faça login primeiro.'
-        ];  
+        ];
         header("Location: /login");
         exit;
     } else {
@@ -81,13 +90,13 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->getCuidador($matches[1]);
     }
 
-}elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET') {
+} elseif (preg_match('/\/users\/(\d+)\/edit/', $uri, $matches) && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
             'type' => 'error',
             'message' => 'Não tem acesso a esta página. 
         Por favor, faça login primeiro.'
-        ];  
+        ];
         header("Location: /login");
         exit;
     } else {
@@ -127,14 +136,9 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
 } elseif ($uri === '/logout' && $method === 'POST') {
     (new AuthController())->logoutWeb();
 
-}
-
-
-elseif ($uri === '/verify-email' && $method === 'GET') {
+} elseif ($uri === '/verify-email' && $method === 'GET') {
     (new AuthController())->verifyEmailForm();
-}
-
-elseif ($uri === '/verify-email' && $method === 'POST') {
+} elseif ($uri === '/verify-email' && $method === 'POST') {
     try {
         (new AuthController())->verifyEmailSubmit();
     } catch (Exception $e) {
@@ -142,10 +146,6 @@ elseif ($uri === '/verify-email' && $method === 'POST') {
         header("Location: /verify-email?token=" . urlencode($_POST['token'] ?? ''));
         exit;
     }
-}
-
-
-
-else {
+} else {
     echo "Página não encontrada";
 }
