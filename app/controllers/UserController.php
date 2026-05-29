@@ -13,16 +13,15 @@ class UserController
     require __DIR__ . "/../../public/views/{$name}.php";
   }
 
-  public function listProfileApi($userId)
-  {
-
+  public function listProfileApi($userId) {
+    
     try {
       $user = (new UserDao())->findById($userId);
 
       $dataResponse = [
         'success' => true,
         'message' => "Operação realizada com sucesso",
-        'data' => [
+        'data'    => [
           'user' => [
             'id' => $user->getId(),
             'name_user' => $user->getNameUser(),
@@ -38,7 +37,7 @@ class UserController
       $dataResponse = [
         'success' => false,
         'message' => $e->getMessage(),
-        'data' => []
+        'data'    => []
       ];
 
       Utils::jsonResponse($dataResponse, 401);
