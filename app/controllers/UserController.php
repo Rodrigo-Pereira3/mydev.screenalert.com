@@ -45,4 +45,35 @@ class UserController
       exit;
     }
   }
+
+  public function deleteUserApi($userId)
+{
+    try {
+        $deleted = (new UserDAO())->deleteById((int) $userId);
+
+        if (!$deleted) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => 'Utilizador não encontrado ou já apagado.',
+                'data'    => []
+            ], 404);
+            exit;
+        }
+
+        Utils::jsonResponse([
+            'success' => true,
+            'message' => 'Utilizador apagado com sucesso.',
+            'data'    => []
+        ]);
+        exit;
+
+    } catch (Exception $e) {
+        Utils::jsonResponse([
+            'success' => false,
+            'message' => $e->getMessage(),
+            'data'    => []
+        ], 500);
+        exit;
+    }
+}
 }

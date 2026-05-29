@@ -263,6 +263,16 @@ class UserDAO
         return null;
     }
 
+    public function deleteById(int $id): bool
+{
+    $sql = "UPDATE users SET deleted_at = NOW() WHERE id = :id AND deleted_at IS NULL";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->rowCount() > 0;
+}
+
     public function createPending(string $username, string $birth_date, string $email, string $password): int
     {
         $sql = "
@@ -302,6 +312,4 @@ class UserDAO
 
         return (int) $this->conn->lastInsertId();
     }
-
-
 }

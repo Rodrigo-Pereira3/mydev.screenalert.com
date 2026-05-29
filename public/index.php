@@ -60,7 +60,14 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->getPacientes($matches[1]);
     }
 
-}elseif (preg_match('/\/paciente\/(\d+)\/cuidador/', $uri, $matches) && $method === 'GET') {
+}elseif (preg_match('/\/users\/(\d+)\/delete/', $uri, $matches) && $method === 'DELETE') {
+    if (!$isLogin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Não autorizado.']);
+        exit;
+    }
+    (new UserController())->deleteUserApi($matches[1]);
+} elseif (preg_match('/\/paciente\/(\d+)\/cuidador/', $uri, $matches) && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
             'type' => 'error',
