@@ -38,9 +38,8 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Status</th>
-                        <th>Registered</th>
-                        <th>Last Login</th>
-                        <th>Actions</th>
+                        <th>Created</th>
+                        <th>Verified</th>
                     </tr>
                 </thead>
                 <tbody id="pacienteTable">
@@ -48,10 +47,10 @@
                         <tr>
                             <td><?= $paciente->getId() ?></td>
                             <td>
-                                <?php if ($paciente->getIsAdmin()): ?>
-                                    <i class="fa-solid fa-paciente"></i>
+                                <?php if ($user->getIsAdmin()): ?>
+                                    <i class="fa-solid fa-user"></i>
                                 <?php else: ?>
-                                    <i class="fa-regular fa-paciente"></i>
+                                    <i class="fa-regular fa-user"></i>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -71,13 +70,12 @@
                                 <?php endif; ?>
 
                             </td>
-                            <td>2024-01-10</td>
-                            <td>2024-02-20 14:32</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning edit-btn"><i
-                                        class="fa-solid fa-pen-to-square"></i></button>
-                                <button class="btn btn-sm btn-danger delete-btn"><i class="fa-solid fa-trash"></i></button>
-                            </td>
+                            <td><?= $paciente->getCreatedAt() ?></td>
+                            <td><?php if ($paciente->getIsVerified()): ?>
+                                    <i class="fa-solid fa-check"></i>
+                                <?php else: ?>
+                                    <i class="fa-regular fa-circle"></i>
+                                <?php endif; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
