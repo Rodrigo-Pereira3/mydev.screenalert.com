@@ -125,4 +125,62 @@ class PacienteController
             ], 400);
         }
     }
+
+
+    public function enviarMensagens(int $cuidadorId, int $pacienteId): void
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+            $userDAO = new UserDAO();
+            $paciente = $userDAO->findById($pacienteId);
+            if (!$paciente || $paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Paciente não encontrado ou não pertence a este cuidador.");
+            }
+
+            // Ler e validar entrada
+            $messageText = trim($_POST['message'] ?? '');
+
+            if ($messageText === '') {
+                throw new Exception('Mensagem vazia.');
+            }
+
+            if (mb_strlen($messageText) > 2000) {
+                throw new Exception('Mensagem demasiado longa. Máx 2000 caracteres.');
+            }
+
+            // Inserir mensagem usando a mesma conexão ($pdo) para respeitar a transação
+            $sql = "INSERT INTO messages (id_user, text_message, status, sent_at) VALUES (:id_user, :text_message, :status, NOW())";
+            $stmt = $pdo->prepare($sql);
+            $status = 'Unseen';
+            $stmt->bindParam(':id_user', $pacienteId, PDO::PARAM_INT);
+            $stmt->bindParam(':text_message', $messageText, PDO::PARAM_STR);
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+            $stmt->execute();
+
+            $messageId = (int)$pdo->lastInsertId();
+
+            $pdo->commit();
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Mensagem enviada com sucesso',
+                'data' => [
+                    'id' => $messageId
+                ]
+            ], 201);
+
+        } catch (Exception $e) {
+            $pdo->rollBack();
+
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+
+            return;
+        }   
+    }
 }

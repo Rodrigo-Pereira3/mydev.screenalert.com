@@ -58,8 +58,15 @@ elseif ($uri === '/cuidador/pacientes/(+d)' && $method === 'GET') {
   
 }
 
+elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/temperatura/', $uri, $matches) && $method === 'GET') {
+  $tokenDecoded = AuthController::requireAuth();
+  (new PacienteController())->getPacienteTemp($tokenDecoded->data->id, $pacienteId, $matches[1]);
+}
 
-
+elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/enviarMensagens/', $uri, $matches) && $method === 'POST') {
+  $tokenDecoded = AuthController::requireAuth();
+  (new PacienteController())->enviarMensagens($tokenDecoded->data->id, $pacienteId, $matches[1]);
+}
   
 
 else {
