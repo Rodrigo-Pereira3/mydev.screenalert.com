@@ -40,6 +40,7 @@ class PacienteController
                 ]
             ];
 
+            $pdo->commit();
             Utils::jsonResponse($responseData, 200);
 
         } catch (Exception $e) {
@@ -63,7 +64,7 @@ class PacienteController
         try {
             $cuidadorId = (int) $tokenDecoded->data->id;
 
-            // 2. Lê os dados do paciente
+
             $username = trim($_POST["username"] ?? '');
             $birth_date = trim($_POST["birth_date"] ?? '');
             $email = trim($_POST['email'] ?? '');
@@ -83,10 +84,10 @@ class PacienteController
                 throw new Exception("Já existe uma conta com esse email.");
             }
 
-            // 3. Cria o paciente com o id_cuidador do token
+
             $userId = $userDAO->createPendingWithCuidador($username, $birth_date, $email, $password, $cuidadorId);
 
-            // 4. Envia email de verificação (igual ao signup normal)
+
             $verifyDAO = new EmailVerificationDAO();
             $token = $verifyDAO->createForUser($userId, 600);
 
@@ -127,39 +128,38 @@ class PacienteController
     }
 
 
-    public function enviarMensagens(int $cuidadorId, int $pacienteId): void
+    public function enviarMensagens(object $tokenDecoded, int $id): void
     {
         $pdo = DatabaseSingle::connect();
         $pdo->beginTransaction();
 
         try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $pacienteId = $id;
+
+            $text = trim($_POST["text"] ?? '');
+
+            if ($text === '') {
+                throw new Exception("Não é possível enviar uma mensagem vazia.");
+            }
+
             $userDAO = new UserDAO();
+
             $paciente = $userDAO->findById($pacienteId);
-            if (!$paciente || $paciente->getIdCuidador() !== $cuidadorId) {
-                throw new Exception("Paciente não encontrado ou não pertence a este cuidador.");
+
+            if (!$paciente) {
+                throw new Exception("Paciente não encontrado.");
             }
 
-            // Ler e validar entrada
-            $messageText = trim($_POST['message'] ?? '');
-
-            if ($messageText === '') {
-                throw new Exception('Mensagem vazia.');
+            if ($paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão para enviar mensagem a este paciente.");
             }
 
-            if (mb_strlen($messageText) > 2000) {
-                throw new Exception('Mensagem demasiado longa. Máx 2000 caracteres.');
+            if (!$paciente->getIsVerified()) {
+                throw new Exception("Paciente ainda não verificou o email. Não é possível enviar mensagens.");
             }
 
-            // Inserir mensagem usando a mesma conexão ($pdo) para respeitar a transação
-            $sql = "INSERT INTO messages (id_user, text_message, status, sent_at) VALUES (:id_user, :text_message, :status, NOW())";
-            $stmt = $pdo->prepare($sql);
-            $status = 'Unseen';
-            $stmt->bindParam(':id_user', $pacienteId, PDO::PARAM_INT);
-            $stmt->bindParam(':text_message', $messageText, PDO::PARAM_STR);
-            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
-            $stmt->execute();
-
-            $messageId = (int)$pdo->lastInsertId();
+            $userDAO->enviarMensagem($text, $pacienteId);
 
             $pdo->commit();
 
@@ -167,7 +167,13 @@ class PacienteController
                 'success' => true,
                 'message' => 'Mensagem enviada com sucesso',
                 'data' => [
-                    'id' => $messageId
+                    'user' => [
+                        $paciente->getNameUser(),
+                        $paciente->getEmail(),
+                        $paciente->getIsAdmin(),
+                        $paciente->getIsVerified()
+
+                    ]
                 ]
             ], 201);
 
@@ -179,8 +185,66 @@ class PacienteController
                 'message' => $e->getMessage(),
                 'data' => []
             ], 400);
+        }
+    }
 
-            return;
-        }   
+    public function gerirHorario(object $tokenDecoded, int $id): void
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $pacienteId = $id;
+
+            $name = trim($_POST["name"] ?? '');
+
+            if ($name === '') {
+                throw new Exception("Nome do paciente é obrigatório.");
+            }
+
+            $userDAO = new UserDAO();
+
+            $paciente = $userDAO->findById($pacienteId);
+
+            if (!$paciente) {
+                throw new Exception("Paciente não encontrado.");
+            }
+
+            if ($paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão para enviar mensagem a este paciente.");
+            }
+
+            if (!$paciente->getIsVerified()) {
+                throw new Exception("Paciente ainda não verificou o email. Não é possível enviar mensagens.");
+            }
+
+            $userDAO->enviarMensagem($name, $pacienteId);
+
+            $pdo->commit();
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Mensagem enviada com sucesso',
+                'data' => [
+                    'user' => [
+                        $paciente->getNameUser(),
+                        $paciente->getEmail(),
+                        $paciente->getIsAdmin(),
+                        $paciente->getIsVerified()
+
+                    ]
+                ]
+            ], 201);
+
+        } catch (Exception $e) {
+            $pdo->rollBack();
+
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+        }
     }
 }

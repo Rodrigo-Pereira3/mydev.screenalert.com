@@ -111,7 +111,7 @@ class UserDAO
         return $users;
     }
 
-    public function findById(string $id): ?User
+    public function findById(int $id): ?User
     {
         $sql = "SELECT * FROM users WHERE id = :id LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -183,8 +183,7 @@ class UserDAO
     {
         $sql = "SELECT 
         m.id AS id_message,
-        m.id_user AS id_paciente,
-        m.status AS status,
+        m.id_user AS id_user,
         m.sent_at AS data_enviada,
         m.text_message AS texto_mensagem,
         u.name_user AS nome_paciente
@@ -198,11 +197,10 @@ class UserDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $messages[] = new Message(
                 $row['id_message'],
-                $row['id_paciente'],
-                $row['status'],
+                $row['id_user'],
                 $row['data_enviada'],
                 $row['texto_mensagem'],
-                $row['nome_paciente']   // novo campo
+                $row['nome_paciente']  
             );
         }
 
@@ -311,5 +309,13 @@ class UserDAO
         $stmt->execute([$cuidadorId, $username, $birth_date, $email, $password]);
 
         return (int) $this->conn->lastInsertId();
+    }
+
+    public function enviarMensagem(string $text, int $pacienteId): void
+    {
+        $sql = "INSERT INTO messages (id_user, sent_at, text_message) 
+        VALUES (?, NOW(), ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$pacienteId, $text]);
     }
 }

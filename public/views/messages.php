@@ -11,7 +11,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Receiver</th>
-                        <th>status</th>
                         <th>Date</th>
                         <th>Message</th>
                     </tr>
@@ -21,14 +20,8 @@
                         <tr>
                             <td><?= $message->getId() ?></td> 
                             <td>
-                                <a href="/paciente/<?= $message->getIdPaciente() ?>/cuidador">
+                                <a href="/paciente/<?= $message->getIdUser() ?>/cuidador">
                                     <?= $message->getNomePaciente() ?></a>
-                            </td>
-                            <td><?php if ($message->getStatus() === 'Seen'): ?>
-                                    <span class="badge bg-success"><?= $message->getStatus() ?></span>
-                                <?php else: ?>
-                                    <span class="badge bg-danger"><?= $message->getStatus() ?></span>
-                                <?php endif; ?>
                             </td>
                             <td><?= $message->getSentAt() ?></td>
                             <td><?= $message->getTextMessage() ?></td>

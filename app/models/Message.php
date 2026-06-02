@@ -3,8 +3,7 @@
 class Message {
     // Colunas da tabela
     private int $id;
-    private int $id_paciente;
-    private string $status; // 'Seen' | 'Unseen'
+    private int $id_user;
     private string $sent_at;
     private string $text_message;
     private string $nome_paciente; // Nome do paciente (para exibição)
@@ -12,15 +11,13 @@ class Message {
     // Constructor
     public function __construct(
         int $id = 0,
-        int $id_paciente = 0,
-        string $status = 'Unseen',
+        int $id_user = 0,
         string $sent_at = '',
         string $text_message = '',
         string $nome_paciente = ''
     ) {
         $this->id           = $id;
-        $this->id_paciente  = $id_paciente;
-        $this->status       = $status;
+        $this->id_user      = $id_user;
         $this->sent_at      = $sent_at;
         $this->text_message = $text_message;
         $this->nome_paciente = $nome_paciente;
@@ -32,13 +29,10 @@ class Message {
         return $this->id;
     }
 
-    public function getIdPaciente(): int {
-        return $this->id_paciente;
+    public function getIdUser(): int {
+        return $this->id_user;
     }
 
-    public function getStatus(): string {
-        return $this->status;
-    }
 
     public function getSentAt(): string {
         return $this->sent_at;
@@ -58,13 +52,10 @@ class Message {
         $this->id = $id;
     }
 
-    public function setIdPaciente(int $id_paciente): void {
-        $this->id_paciente = $id_paciente;
+    public function setIdUser(int $id_user): void {
+        $this->id_user = $id_user;
     }
 
-    public function setStatus(string $status): void {
-        $this->status = $status;
-    }
 
     public function setSentAt(string $sent_at): void {
         $this->sent_at = $sent_at;
