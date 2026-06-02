@@ -318,4 +318,22 @@ class UserDAO
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pacienteId, $text]);
     }
+    public function getMensagensByPacienteId(int $pacienteId): array
+    {
+        $sql = "SELECT id, id_user, sent_at, text_message FROM messages WHERE id_user = ? ORDER BY sent_at DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$pacienteId]);
+        $messages = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $messages[] = new Message(
+                $row['id'],
+                $row['id_user'],
+                $row['sent_at'],
+                $row['text_message']
+            );
+        }
+
+        return $messages;
+    }
 }

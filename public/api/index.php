@@ -69,6 +69,12 @@ elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/enviarMensagens/', $uri, $m) 
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->enviarMensagens($tokenDecoded, $id);
 }
+
+elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/historicoMensagens/', $uri, $m) && $method === 'GET') {
+  $id = (int)$m[1];
+  $tokenDecoded = AuthController::requireAuth();
+  (new PacienteController())->historicoMensagens($tokenDecoded, $id);
+}
   
 
 else {

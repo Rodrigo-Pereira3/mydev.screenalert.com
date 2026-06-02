@@ -247,4 +247,53 @@ class PacienteController
             ], 400);
         }
     }
+
+    public function historicoMensagens(object $tokenDecoded, int $id): void
+    {
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $pacienteId = $id;
+
+            $userDAO = new UserDAO();
+
+            $paciente = $userDAO->findById($pacienteId);
+            if (!$paciente) {
+                throw new Exception("Paciente não encontrado.");
+            }
+            if ($paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão para acessar mensagens deste paciente.");
+            }
+            if (!$paciente->getIsVerified()) {
+                throw new Exception("Paciente ainda não verificou o email. Não é possível acessar mensagens.");
+            }
+            $mensagens = $userDAO->getMensagensByPacienteId($pacienteId);
+            $mensagensArray = [];
+            foreach ($mensagens as $m) {
+                $mensagensArray[] = $m->toArray();
+            }   
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Mensagens carregadas com sucesso',
+                'data' => [
+                    'user' => [
+                        $paciente->getNameUser(),
+                        $paciente->getEmail(),
+                        $paciente->getIsAdmin(),
+                        $paciente->getIsVerified()
+
+                    ],
+                    'mensagens' => $mensagensArray,
+                    'mensagens' => getSentAt,
+                    'mensagens' => getTextMessage
+
+                ]
+            ], 200);
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+        }
+    }
 }
