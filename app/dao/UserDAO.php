@@ -358,4 +358,12 @@ class UserDAO
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$scheduleId, $dayOfWeek, $doce]);
     }
+
+    public function getTemperature(float $temperature, int $pacienteId): void
+    {
+        $sql = "INSERT INTO temperatures (id_screen_alert_display, temperature, temperature_time) 
+        VALUES (?, ?, NOW())";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$pacienteId, $temperature]);
+    }
 }

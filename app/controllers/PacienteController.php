@@ -313,4 +313,48 @@ class PacienteController
             ], 400);
         }
     }
+
+    public function temperaturas(object $tokenDecoded, int $id): void
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $pacienteId = $id;
+
+            $temperature = trim($_POST["temperature"] ?? '');
+
+
+            $userDAO = new UserDAO();
+
+            $paciente = $userDAO->findById($pacienteId);
+
+            if (!$paciente) {
+                throw new Exception("Paciente não encontrado.");
+            }
+
+            $userDAO->getTemperature($temperature, $pacienteId);
+
+            $pdo->commit();
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Temperatura registrada com sucesso',
+                'data' => [
+                    'temperature' => $temperature
+                ]
+            ], 201);
+
+        } catch (Exception $e) {
+            $pdo->rollBack();
+
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+        }
+    }
+
 }

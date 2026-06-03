@@ -74,6 +74,14 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
   
 }
   
+elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/temperatura/', $uri, $m) && $method === 'GET') {
+
+  $id = (int)$m[1];
+
+  $tokenDecoded = AuthController::requireAuth();
+  (new PacienteController())->historicoCuidados($tokenDecoded, $id);
+  
+}
 
 else {
   $dataResponse = [
