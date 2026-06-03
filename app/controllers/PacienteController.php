@@ -70,7 +70,13 @@ class PacienteController
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Paciente criado e associado com sucesso',
-                'data' => []
+                'data' => [
+                    'user' => [
+                        'name' => $username,
+                        'email' => $email,
+                        'birthdate' => $birth_date
+                    ]
+                ]
             ], 201);
 
         } catch (Exception $e) {
@@ -100,9 +106,9 @@ class PacienteController
                 'message' => 'Pacientes encontrados',
                 'data' => [
                     'user' => [
-                        $user->getNameUser(),
-                        $user->getEmail(),
-                        $user->getBirthDate()
+                        'name' => $user->getNameUser(),
+                        'email' => $user->getEmail(),
+                        'birth_date' => $user->getBirthDate()
                     ],
                     'pacientes' => $pacientesArray
                 ]
@@ -165,11 +171,10 @@ class PacienteController
                 'message' => 'Mensagem enviada com sucesso',
                 'data' => [
                     'user' => [
-                        $paciente->getNameUser(),
-                        $paciente->getEmail(),
-                        $paciente->getIsAdmin(),
-                        $paciente->getIsVerified()
-
+                        'name' => $paciente->getNameUser(),
+                        'email' => $paciente->getEmail(),
+                        'is_admin' => $paciente->getIsAdmin(),
+                        'is_verified' => $paciente->getIsVerified()
                     ]
                 ]
             ], 201);
