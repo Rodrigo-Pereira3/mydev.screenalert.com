@@ -13,49 +13,6 @@ class PacienteController
         require __DIR__ . "/../../public/views/{$name}.php";
     }
 
-    public function getPacientesApi(int $userId): void
-    {
-        $pdo = DatabaseSingle::connect();
-
-        $pdo->beginTransaction();
-        try {
-            $user = (new UserDAO())->findById($userId);
-            $pacientes = (new UserDAO())->getPacientesByCuidadorId($userId);
-
-            $pacientesArray = [];
-            foreach ($pacientes as $p) {
-                $pacientesArray[] = $p->toArray();
-            }
-
-            $responseData = [
-                'success' => true,
-                'message' => 'Pacientes encontrados',
-                'data' => [
-                    'user' => [
-                        $user->getNameUser(),
-                        $user->getEmail(),
-                        $user->getBirthDate()
-                    ],
-                    'pacientes' => $pacientesArray
-                ]
-            ];
-
-            $pdo->commit();
-            Utils::jsonResponse($responseData, 200);
-
-        } catch (Exception $e) {
-            $pdo->rollBack();
-
-            $responseData = [
-                'success' => false,
-                'message' => 'Erro ao carregar pacientes',
-                'data' => [],
-            ];
-
-            Utils::jsonResponse($responseData, 400);
-        }
-    }
-
     public function addPacienteApi(object $tokenDecoded): void
     {
         $pdo = DatabaseSingle::connect();
@@ -127,6 +84,46 @@ class PacienteController
         }
     }
 
+    public function getPacientesApi(int $userId): void
+    {
+        try {
+            $user = (new UserDAO())->findById($userId);
+            $pacientes = (new UserDAO())->getPacientesByCuidadorId($userId);
+
+            $pacientesArray = [];
+            foreach ($pacientes as $p) {
+                $pacientesArray[] = $p->toArray();
+            }
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Pacientes encontrados',
+                'data' => [
+                    'user' => [
+                        $user->getNameUser(),
+                        $user->getEmail(),
+                        $user->getBirthDate()
+                    ],
+                    'pacientes' => $pacientesArray
+                ]
+            ];
+
+
+            Utils::jsonResponse($responseData, 200);
+
+        } catch (Exception $e) {
+
+
+            $responseData = [
+                'success' => false,
+                'message' => 'Erro ao carregar pacientes',
+                'data' => [],
+            ];
+
+            Utils::jsonResponse($responseData, 400);
+        }
+    }
+
 
     public function enviarMensagens(object $tokenDecoded, int $id): void
     {
@@ -188,6 +185,63 @@ class PacienteController
         }
     }
 
+    public function historicoMensagens(object $tokenDecoded, int $id): void
+    {
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $pacienteId = $id;
+
+            $userDAO = new UserDAO();
+            $paciente = $userDAO->findById($pacienteId);
+
+            if (!$paciente) {
+                throw new Exception("Paciente não encontrado.");
+            }
+
+            if ($paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão para acessar mensagens deste paciente.");
+            }
+
+            if (!$paciente->getIsVerified()) {
+                throw new Exception("Paciente ainda não verificou o email. Não é possível acessar mensagens.");
+            }
+
+            $historicoMensagens = $userDAO->getMensagensByPacienteId($pacienteId);
+
+            $mensagensArray = [];
+            foreach ($historicoMensagens as $m) {
+                $mensagensArray[] = $m->toArray();
+            }
+
+            $responseData = [
+                'success' => true,
+                'message' => 'Mensagens encontradas',
+                'data' => [
+                    'user' => [
+                        'name' => $paciente->getNameUser(),
+                        'email' => $paciente->getEmail(),
+                        'birthdate' => $paciente->getBirthDate()
+                    ],
+                    'mensagens' => $mensagensArray
+                ]
+            ];
+
+
+            Utils::jsonResponse($responseData, 200);
+
+        } catch (Exception $e) {
+
+
+            $responseData = [
+                'success' => false,
+                'message' => 'Erro ao carregar mensagens: ' . $e->getMessage(),
+                'data' => [],
+            ];
+
+            Utils::jsonResponse($responseData, 400);
+        }
+    }
+
     public function gerirHorario(object $tokenDecoded, int $id): void
     {
         $pdo = DatabaseSingle::connect();
@@ -197,10 +251,18 @@ class PacienteController
             $cuidadorId = (int) $tokenDecoded->data->id;
             $pacienteId = $id;
 
-            $name = trim($_POST["name"] ?? '');
+            $body = json_decode(file_get_contents('php://input'), true);
 
-            if ($name === '') {
-                throw new Exception("Nome do paciente é obrigatório.");
+            $name_medication = trim($body['name_medication'] ?? '');
+            $description_medication = trim($body['description_medication'] ?? '');
+            $days = $body['days'] ?? [];
+
+            if ($name_medication === '') {
+                throw new Exception("Nome do medicamento é obrigatório.");
+            }
+
+            if (empty($days)) {
+                throw new Exception("Pelo menos um dia é obrigatório.");
             }
 
             $userDAO = new UserDAO();
@@ -212,83 +274,33 @@ class PacienteController
             }
 
             if ($paciente->getIdCuidador() !== $cuidadorId) {
-                throw new Exception("Sem permissão para enviar mensagem a este paciente.");
+                throw new Exception("Sem permissão para gerir horário deste paciente.");
             }
 
             if (!$paciente->getIsVerified()) {
-                throw new Exception("Paciente ainda não verificou o email. Não é possível enviar mensagens.");
+                throw new Exception("Paciente ainda não verificou o email.");
             }
 
-            $userDAO->enviarMensagem($name, $pacienteId);
+            $scheduleId = $userDAO->insertScheduleMedication($pacienteId, $name_medication, $description_medication);
+
+            foreach ($days as $day) {
+                $day_of_week = (int) ($day['day_of_week'] ?? 0);
+                $doce = (int) ($day['doce'] ?? 0);
+
+                $userDAO->insertDayForMedication($scheduleId, $day_of_week, $doce);
+            }
 
             $pdo->commit();
 
             Utils::jsonResponse([
                 'success' => true,
-                'message' => 'Mensagem enviada com sucesso',
-                'data' => [
-                    'user' => [
-                        $paciente->getNameUser(),
-                        $paciente->getEmail(),
-                        $paciente->getIsAdmin(),
-                        $paciente->getIsVerified()
-
-                    ]
-                ]
+                'message' => 'Horário criado com sucesso',
+                'data' => []
             ], 201);
 
         } catch (Exception $e) {
             $pdo->rollBack();
 
-            Utils::jsonResponse([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'data' => []
-            ], 400);
-        }
-    }
-
-    public function historicoMensagens(object $tokenDecoded, int $id): void
-    {
-        try {
-            $cuidadorId = (int) $tokenDecoded->data->id;
-            $pacienteId = $id;
-
-            $userDAO = new UserDAO();
-
-            $paciente = $userDAO->findById($pacienteId);
-            if (!$paciente) {
-                throw new Exception("Paciente não encontrado.");
-            }
-            if ($paciente->getIdCuidador() !== $cuidadorId) {
-                throw new Exception("Sem permissão para acessar mensagens deste paciente.");
-            }
-            if (!$paciente->getIsVerified()) {
-                throw new Exception("Paciente ainda não verificou o email. Não é possível acessar mensagens.");
-            }
-            $mensagens = $userDAO->getMensagensByPacienteId($pacienteId);
-            $mensagensArray = [];
-            foreach ($mensagens as $m) {
-                $mensagensArray[] = $m->toArray();
-            }   
-            Utils::jsonResponse([
-                'success' => true,
-                'message' => 'Mensagens carregadas com sucesso',
-                'data' => [
-                    'user' => [
-                        $paciente->getNameUser(),
-                        $paciente->getEmail(),
-                        $paciente->getIsAdmin(),
-                        $paciente->getIsVerified()
-
-                    ],
-                    'mensagens' => $mensagensArray,
-                    'mensagens' => getSentAt,
-                    'mensagens' => getTextMessage
-
-                ]
-            ], 200);
-        } catch (Exception $e) {
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),

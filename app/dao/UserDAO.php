@@ -200,7 +200,7 @@ class UserDAO
                 $row['id_user'],
                 $row['data_enviada'],
                 $row['texto_mensagem'],
-                $row['nome_paciente']  
+                $row['nome_paciente']
             );
         }
 
@@ -320,7 +320,11 @@ class UserDAO
     }
     public function getMensagensByPacienteId(int $pacienteId): array
     {
-        $sql = "SELECT id, id_user, sent_at, text_message FROM messages WHERE id_user = ? ORDER BY sent_at DESC";
+        $sql = "SELECT m.id, m.id_user, m.sent_at, m.text_message, u.name_user AS nome_paciente
+            FROM messages m
+            INNER JOIN users u ON u.id = m.id_user
+            WHERE m.id_user = ?
+            ORDER BY m.sent_at DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pacienteId]);
         $messages = [];
@@ -330,10 +334,28 @@ class UserDAO
                 $row['id'],
                 $row['id_user'],
                 $row['sent_at'],
-                $row['text_message']
+                $row['text_message'],
+                $row['nome_paciente']
             );
         }
 
         return $messages;
+    }
+
+    public function insertScheduleMedication(int $userId, string $name, string $description): int
+    {
+        $sql = "INSERT INTO schedule_medications (id_user, name_medication, description_medication) 
+        VALUES (?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$userId, $name, $description]);
+        return (int) $this->conn->lastInsertId();
+    }
+
+    public function insertDayForMedication(int $scheduleId, int $dayOfWeek, int $doce): void
+    {
+        $sql = "INSERT INTO day_for_medications (id_schedule_medication, day_of_doce, doce) 
+        VALUES (?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$scheduleId, $dayOfWeek, $doce]);
     }
 }

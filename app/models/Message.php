@@ -68,4 +68,14 @@ class Message {
     public function setNomePaciente(string $nome_paciente): void {
         $this->nome_paciente = $nome_paciente;
     }
+
+    public function toArray(): array {
+        return [
+            'id' => $this->id,
+            'id_user' => $this->id_user,
+            'sent_at' => $this->sent_at,
+            'text_message' => $this->text_message,
+            'nome_paciente' => $this->nome_paciente
+        ];
+    }
 }

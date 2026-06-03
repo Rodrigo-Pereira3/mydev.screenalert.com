@@ -37,7 +37,7 @@ class AuthMiddleware
     } catch (ExpiredException $e) {
       $dataResponse = [
         'success' => false,
-        'message' => "Token expirado" . $e->getMessage(),
+        'message' => "Token expirado:  " . $e->getMessage(),
         'data'    => []
       ];
 
@@ -47,7 +47,7 @@ class AuthMiddleware
     } catch (SignatureInvalidException $e) {
       $dataResponse = [
         'success' => false,
-        'message' => "Assinatura do token inválida" . $e->getMessage(),
+        'message' => "Assinatura do token inválida: " . $e->getMessage(),
         'data'    => []
       ];
 
@@ -57,7 +57,7 @@ class AuthMiddleware
     } catch (BeforeValidException $e) {
       $dataResponse = [
         'success' => false,
-        'message' => "Token ainda não é válido" . $e->getMessage(),
+        'message' => "Token ainda não é válido: " . $e->getMessage(),
         'data'    => []
       ];
 
@@ -67,7 +67,7 @@ class AuthMiddleware
     } catch (Exception $e) {
       $dataResponse = [
         'success' => false,
-        'message' => "Assinatura do token inválida" . $e->getMessage(),
+        'message' => "Assinatura do token inválida: " . $e->getMessage(),
         'data'    => []
       ];
 

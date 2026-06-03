@@ -32,9 +32,14 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 } elseif ($uri === "/users/profile" && $method === 'GET') {
 
   $tokenDecoded = AuthController::requireAuth();
-  //var_dump($tokenDecoded);
 
   (new UserController())->listProfileApi($tokenDecoded->data->id);
+
+} elseif ($uri === '/paciente/add' && $method === 'POST') {
+
+    $tokenDecoded = AuthController::requireAuth();
+    
+    (new PacienteController())->addPacienteApi($tokenDecoded);
 
 } elseif ($uri === '/cuidador/pacientes' && $method === 'GET') {
 
@@ -42,38 +47,31 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
   (new PacienteController())->getPacientesApi($tokenDecoded->data->id);
   
-} elseif ($uri === '/paciente/add' && $method === 'POST') {
-    AuthMiddleware::check();
-    $tokenDecoded = AuthController::requireAuth();
-    
-    (new PacienteController())->addPacienteApi($tokenDecoded);
+} elseif ($uri === '/cuidador/pacientes/(+d)' && $method === 'GET') {
 
-  
-}  
-
-elseif ($uri === '/cuidador/pacientes/(+d)' && $method === 'GET') {
-// pagina details do paciente por id
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->getPacienteHome($tokenDecoded->data->id, $uri);
   
-}
+} elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/enviarMensagens/', $uri, $m) && $method === 'POST') {
 
-elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/gerirHorario/', $uri, $m) && $method === 'GET') {
   $id = (int)$m[1];
-  $tokenDecoded = AuthController::requireAuth();
-  (new PacienteController())->gerirHorario($tokenDecoded->data->id, $m[1]);
-}
 
-elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/enviarMensagens/', $uri, $m) && $method === 'POST') {
-  $id = (int)$m[1];
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->enviarMensagens($tokenDecoded, $id);
-}
+} elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/historicoMensagens/', $uri, $m) && $method === 'GET') {
 
-elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/historicoMensagens/', $uri, $m) && $method === 'GET') {
   $id = (int)$m[1];
+
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->historicoMensagens($tokenDecoded, $id);
+
+}elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/gerirHorario/', $uri, $m) && $method === 'POST') {
+
+  $id = (int)$m[1];
+
+  $tokenDecoded = AuthController::requireAuth();
+  (new PacienteController())->gerirHorario($tokenDecoded, (int)$m[1]);
+  
 }
   
 
