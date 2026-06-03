@@ -4,6 +4,7 @@ require_once __DIR__ . '/../config/DataBase.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Message.php';
 require_once __DIR__ . '/../models/Device.php';
+require_once __DIR__ . '/../models/Temperature.php';
 
 class UserDAO
 {
@@ -359,11 +360,22 @@ class UserDAO
         $stmt->execute([$scheduleId, $dayOfWeek, $doce]);
     }
 
-    public function getTemperature(float $temperature, int $pacienteId): void
+    public function getTemperatures(int $pacienteId): array
     {
-        $sql = "INSERT INTO temperatures (id_screen_alert_display, temperature, temperature_time) 
-        VALUES (?, ?, NOW())";
+        $sql = "SELECT id, id_user, temperature, temperature_time FROM temperatures WHERE id_user = ? ORDER BY temperature_time DESC";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$pacienteId, $temperature]);
+        $stmt->execute([$pacienteId]);
+        $temperatures = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $temperatures[] = new Temperature(
+                $row['id'],
+                $row['id_user'],
+                $row['temperature'],
+                $row['temperature_time']
+            );
+        }
+
+        return $temperatures;
     }
 }

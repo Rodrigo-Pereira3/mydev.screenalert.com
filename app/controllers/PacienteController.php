@@ -316,14 +316,9 @@ class PacienteController
 
     public function temperaturas(object $tokenDecoded, int $id): void
     {
-        $pdo = DatabaseSingle::connect();
-        $pdo->beginTransaction();
-
         try {
             $cuidadorId = (int) $tokenDecoded->data->id;
             $pacienteId = $id;
-
-            $temperature = trim($_POST["temperature"] ?? '');
 
 
             $userDAO = new UserDAO();
@@ -334,20 +329,32 @@ class PacienteController
                 throw new Exception("Paciente não encontrado.");
             }
 
-            $userDAO->getTemperature($temperature, $pacienteId);
+            if ($paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão para gerir horário deste paciente.");
+            }
 
-            $pdo->commit();
+            if (!$paciente->getIsVerified()) {
+                throw new Exception("Paciente ainda não verificou o email.");
+            }
+
+            $temperatures = $userDAO->getTemperatures($pacienteId);
+
+            $data = [];
+
+            foreach ($temperatures as $temperature) {
+                $data[] = [
+                    'temperature' => $temperature->getTemperature(),
+                    'time' => $temperature->getTemperatureTime()
+                ];
+            }
 
             Utils::jsonResponse([
                 'success' => true,
-                'message' => 'Temperatura registrada com sucesso',
-                'data' => [
-                    'temperature' => $temperature
-                ]
-            ], 201);
+                'message' => 'Temperaturas obtidas com sucesso',
+                'data' => $data
+            ], 200);
 
         } catch (Exception $e) {
-            $pdo->rollBack();
 
             Utils::jsonResponse([
                 'success' => false,

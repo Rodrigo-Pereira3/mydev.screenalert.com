@@ -79,7 +79,7 @@ elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/temperatura/', $uri, $m) && $
   $id = (int)$m[1];
 
   $tokenDecoded = AuthController::requireAuth();
-  (new PacienteController())->historicoCuidados($tokenDecoded, $id);
+  (new PacienteController())->temperaturas($tokenDecoded, $id);
   
 }
 
