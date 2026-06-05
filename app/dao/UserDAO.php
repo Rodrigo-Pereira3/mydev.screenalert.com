@@ -312,6 +312,35 @@ class UserDAO
         return (int) $this->conn->lastInsertId();
     }
 
+    public function getPacienteById(int $cuidadorId, int $pacienteId): ?User
+    {
+        $sql = "SELECT * FROM users WHERE id = :paciente_id AND id_cuidador = :cuidador_id AND deleted_at IS NULL";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':paciente_id', $pacienteId);
+        $stmt->bindParam(':cuidador_id', $cuidadorId);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row)
+            return null;
+
+        return new User(
+            $row['id'],
+            $row['id_cuidador'],
+            $row['is_admin'],
+            $row['name_user'],
+            $row['birth_date'],
+            $row['email'],
+            $row['password'],
+            $row['status'],
+            $row['is_verified'],
+            $row['verified_at'] ?? '',
+            $row['created_at'],
+            $row['deleted_at'] ?? ''
+        );
+    }
+
     public function enviarMensagem(string $text, int $pacienteId): void
     {
         $sql = "INSERT INTO messages (id_user, sent_at, text_message) 

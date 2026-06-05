@@ -47,25 +47,27 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
   (new PacienteController())->getPacientesApi($tokenDecoded->data->id);
   
-} elseif ($uri === '/cuidador/pacientes/(+d)' && $method === 'GET') {
+} elseif (preg_match('/\/cuidador\/paciente\/(\d+)$/', $uri, $m) && $method === 'GET') {
 
+  $pacienteId = (int)$m[1];
   $tokenDecoded = AuthController::requireAuth();
-  (new PacienteController())->getPacienteHome($tokenDecoded->data->id, $uri);
+  (new PacienteController())->getPacienteHome($tokenDecoded->data->id, $pacienteId);
+
   
-} elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/enviarMensagens/', $uri, $m) && $method === 'POST') {
+} elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/enviarMensagens/', $uri, $m) && $method === 'POST') {
 
   $id = (int)$m[1];
 
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->enviarMensagens($tokenDecoded, $id);
-} elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/historicoMensagens/', $uri, $m) && $method === 'GET') {
+} elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/historicoMensagens/', $uri, $m) && $method === 'GET') {
 
   $id = (int)$m[1];
 
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->historicoMensagens($tokenDecoded, $id);
 
-}elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/gerirHorario/', $uri, $m) && $method === 'POST') {
+}elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/gerirHorario/', $uri, $m) && $method === 'POST') {
 
   $id = (int)$m[1];
 
@@ -74,7 +76,7 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
   
 }
   
-elseif (preg_match('/\/cuidador\/pacientes\/(\d+)\/temperatura/', $uri, $m) && $method === 'GET') {
+elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/temperatura/', $uri, $m) && $method === 'GET') {
 
   $id = (int)$m[1];
 

@@ -96,6 +96,7 @@ class PacienteController
             $user = (new UserDAO())->findById($userId);
             $pacientes = (new UserDAO())->getPacientesByCuidadorId($userId);
 
+
             $pacientesArray = [];
             foreach ($pacientes as $p) {
                 $pacientesArray[] = $p->toArray();
@@ -122,7 +123,7 @@ class PacienteController
 
             $responseData = [
                 'success' => false,
-                'message' => 'Erro ao carregar pacientes',
+                'message' => 'Erro ao carregar pacientes. ' . $e->getMessage(),
                 'data' => [],
             ];
 
@@ -130,6 +131,39 @@ class PacienteController
         }
     }
 
+    public function getPacienteHome($cuidadorId, int $pacienteId): void
+    {
+        try {
+            $paciente = (new UserDAO())->getPacienteById($cuidadorId, $pacienteId);
+
+            if (!$paciente) {
+                Utils::jsonResponse([
+                    'success' => false, 
+                    'message' => 'Paciente não encontrado.', 
+                    'data' => []
+                ], 404);
+                return;
+            }
+
+            if (!$paciente->getIsVerified()) {
+                Utils::jsonResponse([
+                    'success' => false, 
+                    'message' => 'Paciente ainda não verificou o email.', 
+                    'data' => []
+                ], 403);
+                return;
+            }
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Paciente encontrado',
+                'data' => $paciente->toArray()
+            ], 200);
+
+        } catch (Exception $e) {
+            Utils::jsonResponse(['success' => false, 'message' => 'Erro ao carregar paciente', 'data' => []], 400);
+        }
+    }
 
     public function enviarMensagens(object $tokenDecoded, int $id): void
     {
