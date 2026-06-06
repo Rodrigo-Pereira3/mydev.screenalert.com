@@ -7,41 +7,32 @@ use Firebase\JWT\JWT;
 
 class UserController
 {
-  private function view(string $name, array $data = []): void
+  public function listProfileApi($userId)
   {
-    extract($data, EXTR_SKIP);
-    require __DIR__ . "/../../public/views/{$name}.php";
-  }
-
-  public function listProfileApi($userId) {
-    
     try {
       $user = (new UserDao())->findById($userId);
 
       $dataResponse = [
         'success' => true,
         'message' => "Operação realizada com sucesso",
-        'data'    => [
+        'data' => [
           'user' => [
-            'id' => $user->getId(),
             'name_user' => $user->getNameUser(),
-            'email' => $user->getEmail()
+            'email' => $user->getEmail(),
+            'created_at' => $user->getCreatedAt()
           ]
         ]
       ];
 
       Utils::jsonResponse($dataResponse);
-
       exit;
+
     } catch (Exception $e) {
-      $dataResponse = [
+      Utils::jsonResponse([
         'success' => false,
         'message' => $e->getMessage(),
-        'data'    => []
-      ];
-
-      Utils::jsonResponse($dataResponse, 401);
-
+        'data' => null
+      ], 401);
       exit;
     }
   }
