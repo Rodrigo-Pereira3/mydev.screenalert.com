@@ -146,6 +146,8 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         header("Location: /verify-email?token=" . urlencode($_POST['token'] ?? ''));
         exit;
     }
+}elseif ($uri === '/sucesses' && $method === 'GET') {
+    die("Ja foi verificado com sucesso, agora pode fazer login.");
 } else {
     echo "Página não encontrada";
 }

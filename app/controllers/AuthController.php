@@ -329,7 +329,7 @@ class AuthController
         $verDao->markUsed($token);
 
         $_SESSION['flash_success'] = "Email verificado e password definida. Já podes fazer login.";
-        header("Location: /login");
+        header("Location: /sucesses");
         exit;
     }
 
