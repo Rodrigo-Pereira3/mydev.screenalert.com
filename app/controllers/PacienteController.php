@@ -371,7 +371,9 @@ class PacienteController
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Horários obtidos com sucesso',
-                'data' => $horarios
+                'data' => [
+                    'horarios' => $horarios
+                ]
             ], 200);
 
         } catch (Exception $e) {
