@@ -138,8 +138,8 @@ class PacienteController
 
             if (!$paciente) {
                 Utils::jsonResponse([
-                    'success' => false, 
-                    'message' => 'Paciente não encontrado.', 
+                    'success' => false,
+                    'message' => 'Paciente não encontrado.',
                     'data' => []
                 ], 404);
                 return;
@@ -147,8 +147,8 @@ class PacienteController
 
             if (!$paciente->getIsVerified()) {
                 Utils::jsonResponse([
-                    'success' => false, 
-                    'message' => 'Paciente ainda não verificou o email.', 
+                    'success' => false,
+                    'message' => 'Paciente ainda não verificou o email.',
                     'data' => []
                 ], 403);
                 return;
@@ -340,6 +340,41 @@ class PacienteController
         } catch (Exception $e) {
             $pdo->rollBack();
 
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+        }
+    }
+
+    public function gerirHorarioHistorico(object $tokenDecoded, int $id): void
+    {
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $pacienteId = $id;
+
+            $userDAO = new UserDAO();
+
+            $paciente = $userDAO->findById($pacienteId);
+
+            if (!$paciente) {
+                throw new Exception("Paciente não encontrado.");
+            }
+
+            if ($paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão para ver horário deste paciente.");
+            }
+
+            $horarios = $userDAO->getHorarioByPacienteId($pacienteId);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Horários obtidos com sucesso',
+                'data' => $horarios
+            ], 200);
+
+        } catch (Exception $e) {
             Utils::jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage(),

@@ -74,6 +74,13 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->gerirHorario($tokenDecoded, (int)$m[1]);
   
+}elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/gerirHorarioHistorico/', $uri, $m) && $method === 'GET') {
+
+  $id = (int)$m[1];
+
+  $tokenDecoded = AuthController::requireAuth();
+  (new PacienteController())->gerirHorarioHistorico($tokenDecoded, (int)$m[1]);
+  
 }
   
 elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/temperatura/', $uri, $m) && $method === 'GET') {

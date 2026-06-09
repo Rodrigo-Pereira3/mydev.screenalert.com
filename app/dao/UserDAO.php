@@ -372,6 +372,28 @@ class UserDAO
         return $messages;
     }
 
+    public function getHorarioByPacienteId(int $pacienteId): array
+    {
+        $sql = "SELECT id, name_medication, description_medication 
+                FROM schedule_medications 
+                WHERE id_user = ? 
+                ORDER BY id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$pacienteId]);
+        $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($schedules as &$schedule) {
+            $sql2 = "SELECT day_of_doce, doce 
+                    FROM day_for_medications 
+                    WHERE id_schedule_medication = ?";
+            $stmt2 = $this->conn->prepare($sql2);
+            $stmt2->execute([$schedule['id']]);
+            $schedule['days'] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return $schedules;
+    }
+
     public function insertScheduleMedication(int $userId, string $name, string $description): int
     {
         $sql = "INSERT INTO schedule_medications (id_user, name_medication, description_medication) 
