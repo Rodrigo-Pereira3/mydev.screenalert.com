@@ -61,21 +61,6 @@ if ($uri === '/' || $uri === '/index' || $uri === '/home') {
         (new WebController())->getPacientes($matches[1]);
     }
 
-} elseif ($uri === '/clientes/delete' && $method === "POST") {
-
-    if (!$isLogin) {
-        $_SESSION['toast'] = [
-            'type' => 'error',
-            'message' => 'Acesso negado. Faça login para continuar.'
-        ];
-
-        header("Location: /login");
-        exit();
-    }
-
-    $userId = $_POST['id'];
-
-    (new WebController())->deleteUser($userId);
 } elseif (preg_match('/\/paciente\/(\d+)\/cuidador/', $uri, $matches) && $method === 'GET') {
     if (!$isLogin) {
         $_SESSION['toast'] = [
