@@ -35,6 +35,12 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
 
   (new UserController())->listProfileApi($tokenDecoded->data->id);
 
+}elseif ($uri === "/users/profile/update" && $method === 'POST') {
+
+  $tokenDecoded = AuthController::requireAuth();
+
+  (new UserController())->updateProfileApi($tokenDecoded->data->id);
+
 } elseif ($uri === '/paciente/add' && $method === 'POST') {
 
     $tokenDecoded = AuthController::requireAuth();
