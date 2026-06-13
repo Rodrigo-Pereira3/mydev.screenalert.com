@@ -14,6 +14,7 @@ class User {
     private string $verified_at;
     private string $created_at;
     private string $deleted_at;
+    private string $updated_at;
 
     // Constructor
     public function __construct(
@@ -28,7 +29,8 @@ class User {
         bool $is_verified = false,
         string $verified_at = '',
         string $created_at = '',
-        string $deleted_at = ''
+        string $deleted_at = '',
+        string $updated_at = '' 
     ) {
         $this->id = $id;
         $this->id_cuidador = $id_cuidador;
@@ -42,6 +44,7 @@ class User {
         $this->verified_at = $verified_at;
         $this->created_at = $created_at;
         $this->deleted_at = $deleted_at;
+        $this->updated_at = $updated_at;
     }
 
     // --- Getters ---
@@ -94,6 +97,10 @@ class User {
         return $this->deleted_at;
     }
 
+    public function getUpdatedAt(): string {
+        return $this->updated_at;
+    }
+
     // --- Setters ---
 
     public function setId(int $id): void {
@@ -144,6 +151,10 @@ class User {
         $this->deleted_at = $deleted_at;
     }
 
+    public function setUpdatedAt(string $updated_at): void {
+        $this->updated_at = $updated_at;
+    }
+
     //vou implementar um toArray
     public function toArray(): array {
         return [
@@ -158,7 +169,8 @@ class User {
             'is_verified' => $this->is_verified,
             'verified_at' => $this->verified_at,
             'created_at' => $this->created_at,
-            'deleted_at' => $this->deleted_at
+            'deleted_at' => $this->deleted_at,
+            'updated_at' => $this->updated_at
         ];
     }
 }

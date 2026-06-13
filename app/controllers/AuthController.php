@@ -287,7 +287,7 @@ class AuthController
         }
     }
 
-    //Este é o metodo verifica o email do user.
+    
     public function verifyEmailForm(): void
     {
         $token = $_GET['token'] ?? '';
@@ -300,7 +300,7 @@ class AuthController
         (new WebController())->verifyEmail($token);
     }
 
-    //Este é o metodo que processa a submissão do form de verificação do email, onde o user define a password.
+    
     public function verifyEmailSubmit(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE)

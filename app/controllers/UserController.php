@@ -2,7 +2,7 @@
 
 require_once __DIR__ . "/../dao/UserDAO.php";
 require_once __DIR__ . "/../config/jwt.php";
-require_once __DIR__ . "../config/DatabaseSingle.php";
+require_once __DIR__ . "/../config/DatabaseSingle.php";
 
 use Firebase\JWT\JWT;
 
@@ -40,41 +40,64 @@ class UserController
 
   public function updateProfileApi($userId)
   {
-    $pdo = DatabaseSingle::connect();
-
-    $pdo->beginTransaction();
     try {
-      $data = json_decode(file_get_contents('php://input'), true);
+      $raw = file_get_contents("php://input");
+      $data = json_decode($raw, true);
 
-      $nameUser = $data['name_user'] ?? null;
-      $email = $data['email'] ?? null;
-
-      if (!$nameUser || !$email) {
-        throw new Exception("Os campos 'name_user' e 'email' são obrigatórios.");
+      if (!is_array($data)) {
+        throw new Exception("JSON inválido");
       }
 
-      (new UserDao())->updateProfile($userId, $nameUser, $email);
-      
-      $pdo->commit();
+      $userDao = new UserDao();
+      $user = $userDao->findById((int)$userId);
+
+      if (!$user) {
+        throw new Exception("Utilizador não encontrado");
+      }
+
+      $username = trim($data["username"] ?? $user->getNameUser());
+      $email = trim($data["email"] ?? $user->getEmail());
+      $password = trim($data["password"] ?? "");
+
+      if ($email !== $user->getEmail()) {
+        $existingUser = $userDao->findByEmailAPP($email);
+
+        if ($existingUser && $existingUser->getId() !== $user->getId()) {
+          throw new Exception("Esse email já está em uso");
+        }
+      }
+
+      $hashedPassword = null;
+
+      if ($password !== "") {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+      }
+
+      $updatedUser = $userDao->updateProfileById(
+        (int)$userId,
+        $username,
+        $email,
+        $hashedPassword
+      );
 
       $dataResponse = [
-        'success' => true,
-        'message' => "Perfil atualizado com sucesso",
-        'data' => null
+        "success" => true,
+        "message" => "Perfil atualizado com sucesso",
+        "data" => [
+          "user" => $updatedUser->toArray()
+        ]
       ];
 
       Utils::jsonResponse($dataResponse);
       exit;
-
     } catch (Exception $e) {
+      $dataResponse = [
+        "success" => false,
+        "message" => $e->getMessage(),
+        "data" => []
+      ];
 
-      $pdo->rollBack();
-
-      Utils::jsonResponse([
-        'success' => false,
-        'message' => $e->getMessage(),
-        'data' => null
-      ], 400);
+      Utils::jsonResponse($dataResponse, 401);
       exit;
     }
   }

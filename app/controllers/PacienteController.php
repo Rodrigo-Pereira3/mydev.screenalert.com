@@ -334,8 +334,12 @@ class PacienteController
             Utils::jsonResponse([
                 'success' => true,
                 'message' => 'Horário criado com sucesso',
-                'data' => []
-            ], 201);
+                'data' => [
+                    'name_medication' => $name_medication,
+                    'description_medication' => $description_medication,
+                    'days' => $days
+                ]
+            ], 200);
 
         } catch (Exception $e) {
             $pdo->rollBack();

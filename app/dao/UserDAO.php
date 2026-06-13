@@ -12,13 +12,12 @@ class UserDAO
 
     public function __construct()
     {
-        // Conectar á base de dados
         $this->conn = (new DataBase())->connect();
     }
 
     public function findByEmail(string $email): ?User
     {
-        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at, updated_at
         FROM users 
         WHERE email = :email AND is_admin = 1 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -40,7 +39,8 @@ class UserDAO
                 $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['deleted_at'] ?? ''
+                $row['deleted_at'] ?? '',
+                $row['updated_at'] ?? ''
             );
         }
 
@@ -55,7 +55,6 @@ class UserDAO
         $stmt->execute();
 
         return (int) $stmt->fetchColumn();
-
     }
 
     public function getUsers(): array
@@ -77,7 +76,8 @@ class UserDAO
                 $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['deleted_at'] ?? ''
+                $row['deleted_at'] ?? '',
+                $row['updated_at'] ?? ''
             );
         }
 
@@ -105,7 +105,8 @@ class UserDAO
                 $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['deleted_at'] ?? ''
+                $row['deleted_at'] ?? '',
+                $row['updated_at'] ?? ''
             );
         }
 
@@ -134,18 +135,17 @@ class UserDAO
                 $row['is_verified'],
                 $row['verified_at'] ?? '',
                 $row['created_at'],
-                $row['deleted_at'] ?? ''
+                $row['deleted_at'] ?? '',
+                $row['updated_at'] ?? ''
             );
         }
 
         return null;
     }
 
-
     public function getUsersCount(): int
     {
-        $sql = "SELECT COUNT(*) FROM users
-                WHERE is_admin = 0 AND id_cuidador IS NULL";
+        $sql = "SELECT COUNT(*) FROM users WHERE is_admin = 0 AND id_cuidador IS NULL";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
@@ -154,8 +154,7 @@ class UserDAO
 
     public function getPacientesCount(): int
     {
-        $sql = "SELECT COUNT(*) FROM users
-                WHERE is_admin = 0 AND id_cuidador IS NOT NULL";
+        $sql = "SELECT COUNT(*) FROM users WHERE is_admin = 0 AND id_cuidador IS NOT NULL";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
@@ -207,6 +206,7 @@ class UserDAO
 
         return $messages;
     }
+
     public function getDevices(): array
     {
         $sql = "SELECT 
@@ -233,7 +233,7 @@ class UserDAO
 
     public function findByEmailAPP(string $email): ?User
     {
-        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at
+        $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at, updated_at
         FROM users 
         WHERE email = :email AND is_admin = 0 LIMIT 1";
         $stmt = $this->conn->prepare($sql);
@@ -256,28 +256,17 @@ class UserDAO
                 $row['verified_at'] ?? '',
                 $row['created_at'],
                 $row['deleted_at'] ?? '',
+                $row['updated_at'] ?? ''
             );
         }
 
         return null;
     }
 
-    public function deleteById(int $id): bool
-    {
-        $sql = "UPDATE users SET deleted_at = NOW() WHERE id = :id AND deleted_at IS NULL";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->rowCount() > 0;
-    }
-
     public function createPending(string $username, string $birth_date, string $email, string $password): int
     {
-        $sql = "
-        INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at)
-        VALUES (NULL, 0, ?, ?, ?, ?, 'Active', 0, NULL, NOW(), NULL)
-    ";
+        $sql = "INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at, updated_at)
+        VALUES (NULL, 0, ?, ?, ?, ?, 'Active', 0, NULL, NOW(), NULL, NULL)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$username, $birth_date, $email, $password]);
@@ -287,9 +276,7 @@ class UserDAO
 
     public function setPasswordAndVerify(int $userId, string $hashedPassword): void
     {
-        $sql = "UPDATE users 
-            SET password = ?, is_verified = 1, verified_at = NOW() 
-            WHERE id = ?";
+        $sql = "UPDATE users SET password = ?, is_verified = 1, verified_at = NOW() WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$hashedPassword, $userId]);
     }
@@ -301,15 +288,28 @@ class UserDAO
         string $password,
         int $cuidadorId
     ): int {
-        $sql = "
-        INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at)
-        VALUES (?, 0, ?, ?, ?, ?, 'Active', 0, NULL, NOW(), NULL)
-    ";
+        $sql = "INSERT INTO users (id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at, updated_at)
+        VALUES (?, 0, ?, ?, ?, ?, 'Active', 0, NULL, NOW(), NULL, NULL)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$cuidadorId, $username, $birth_date, $email, $password]);
 
         return (int) $this->conn->lastInsertId();
+    }
+
+    public function updateProfileById(int $id, string $username, string $email, ?string $password = null): ?User
+    {
+        if ($password !== null && $password !== "") {
+            $sql = "UPDATE users SET name_user = ?, email = ?, password = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$username, $email, $password, $id]);
+        } else {
+            $sql = "UPDATE users SET name_user = ?, email = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$username, $email, $id]);
+        }
+
+        return $this->findById($id);
     }
 
     public function getPacienteById(int $cuidadorId, int $pacienteId): ?User
@@ -337,17 +337,18 @@ class UserDAO
             $row['is_verified'],
             $row['verified_at'] ?? '',
             $row['created_at'],
-            $row['deleted_at'] ?? ''
+            $row['deleted_at'] ?? '',
+            $row['updated_at'] ?? ''
         );
     }
 
     public function enviarMensagem(string $text, int $pacienteId): void
     {
-        $sql = "INSERT INTO messages (id_user, sent_at, text_message) 
-        VALUES (?, NOW(), ?)";
+        $sql = "INSERT INTO messages (id_user, sent_at, text_message) VALUES (?, NOW(), ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pacienteId, $text]);
     }
+
     public function getMensagensByPacienteId(int $pacienteId): array
     {
         $sql = "SELECT m.id, m.id_user, m.sent_at, m.text_message, u.name_user AS nome_paciente
@@ -383,9 +384,7 @@ class UserDAO
         $schedules = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($schedules as &$schedule) {
-            $sql2 = "SELECT day_of_doce, doce 
-                    FROM day_for_medications 
-                    WHERE id_schedule_medication = ?";
+            $sql2 = "SELECT day_of_doce, doce FROM day_for_medications WHERE id_schedule_medication = ?";
             $stmt2 = $this->conn->prepare($sql2);
             $stmt2->execute([$schedule['id']]);
             $schedule['days'] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
@@ -396,8 +395,7 @@ class UserDAO
 
     public function insertScheduleMedication(int $userId, string $name, string $description): int
     {
-        $sql = "INSERT INTO schedule_medications (id_user, name_medication, description_medication) 
-        VALUES (?, ?, ?)";
+        $sql = "INSERT INTO schedule_medications (id_user, name_medication, description_medication) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$userId, $name, $description]);
         return (int) $this->conn->lastInsertId();
@@ -405,8 +403,7 @@ class UserDAO
 
     public function insertDayForMedication(int $scheduleId, int $dayOfWeek, int $doce): void
     {
-        $sql = "INSERT INTO day_for_medications (id_schedule_medication, day_of_doce, doce) 
-        VALUES (?, ?, ?)";
+        $sql = "INSERT INTO day_for_medications (id_schedule_medication, day_of_doce, doce) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$scheduleId, $dayOfWeek, $doce]);
     }
