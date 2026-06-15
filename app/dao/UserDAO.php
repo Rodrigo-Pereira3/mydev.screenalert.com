@@ -170,9 +170,9 @@ class UserDAO
         return (int) $stmt->fetchColumn();
     }
 
-    public function getAlertsCount(): int
+    public function getTempCount(): int
     {
-        $sql = "SELECT COUNT(*) FROM alerts";
+        $sql = "SELECT COUNT(*) FROM temperature";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 

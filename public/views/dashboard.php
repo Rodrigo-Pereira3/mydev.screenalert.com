@@ -42,9 +42,9 @@
             <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Alerts Today</h5>
-                        <h2 class="text-danger"><?= $alertsCount ?></h2>
-                        <p class="text-muted small">Triggered alerts</p>
+                        <h5 class="card-title">Temperatures Today</h5>
+                        <h2 class="text-danger"><?= $tempCount ?></h2>
+                        <p class="text-muted small">Temperature readings</p>
                     </div>
                 </div>
             </div>
