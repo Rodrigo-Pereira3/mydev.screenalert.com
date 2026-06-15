@@ -253,15 +253,86 @@ class AuthController
 
             $link = $baseUrl . "/verify-email?token=" . urlencode($token);
 
-            $subject = "Verifica o teu email (expira em 5 min)";
-            $html = "
-                <div style='font-family: Arial, sans-serif;'>
-                    <h2>Olá, " . htmlspecialchars($username) . "!</h2>
-                    <p>Para ativares a tua conta e definires a tua password, clica no link abaixo (válido por <b>5 minutos</b>):</p>
-                    <p><a href='{$link}'>{$link}</a></p>
-                    <p>Se o link expirar, faz signup novamente (ou pede reenvio do link).</p>
-                </div>
-                ";
+           $subject = "Verifica o teu email (expira em 5 min)";
+
+$html = '
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f7; font-family:Arial, Helvetica, sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f5f7; padding:40px 20px;">
+<tr>
+<td align="center">
+
+<table width="600" cellpadding="0" cellspacing="0" border="0"
+style="background-color:#ffffff; border-radius:20px; overflow:hidden;">
+
+<tr>
+<td align="center"
+style="background:linear-gradient(135deg,#6C3BFF,#9B5CFF); padding:40px 20px;">
+<h1 style="margin:0; color:#ffffff;">📺 Screen Alert!</h1>
+<p style="margin-top:10px; color:#EDE8FF;">
+Leve as suas mensagens para qualquer ecrã.
+</p>
+</td>
+</tr>
+
+<tr>
+<td style="padding:45px 40px; text-align:center;">
+<h2>Olá, '.htmlspecialchars($username).'!</h2>
+
+<p style="color:#666666; font-size:16px;">
+Obrigado por te juntares ao <strong>Screen Alert!</strong>.<br><br>
+Para ativares a tua conta, clica no botão abaixo.
+</p>
+
+<table align="center" cellpadding="0" cellspacing="0" border="0" style="margin:35px auto;">
+<tr>
+<td align="center" style="background-color:#6C3BFF; border-radius:12px;">
+<a href="'.$link.'"
+style="display:inline-block; padding:16px 40px; color:#ffffff; text-decoration:none; font-weight:bold;">
+Verificar Conta
+</a>
+</td>
+</tr>
+</table>
+
+<p style="color:#888888; font-size:14px;">
+Se o botão não funcionar:
+</p>
+
+<p>
+<a href="'.$link.'" style="color:#FF5FA2;">
+'.$link.'
+</a>
+</p>
+
+<p style="color:#999999;">
+Este link expira em <strong>5 minutos</strong>.
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="background-color:#fafafa; padding:30px; text-align:center;">
+<p style="margin:0; color:#999999; font-size:13px;">
+© '.date('Y').' Screen Alert! • Todos os direitos reservados.
+</p>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>';
 
             (new MyMailerService())->send($email, $subject, $html);
 

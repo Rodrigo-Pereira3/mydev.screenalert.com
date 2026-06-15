@@ -170,6 +170,17 @@ class UserDAO
         return (int) $stmt->fetchColumn();
     }
 
+<<<<<<< HEAD
+=======
+    public function getTempCount(): int
+    {
+        $sql = "SELECT COUNT(*) FROM temperature";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+>>>>>>> c5571d52661f4ddca9a93ec8701aeb53a5929716
 
     public function getMessages(): array
     {
