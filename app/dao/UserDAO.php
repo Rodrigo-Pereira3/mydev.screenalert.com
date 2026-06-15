@@ -170,8 +170,6 @@ class UserDAO
         return (int) $stmt->fetchColumn();
     }
 
-<<<<<<< HEAD
-=======
     public function getTempCount(): int
     {
         $sql = "SELECT COUNT(*) FROM temperature";
@@ -180,7 +178,6 @@ class UserDAO
 
         return (int) $stmt->fetchColumn();
     }
->>>>>>> c5571d52661f4ddca9a93ec8701aeb53a5929716
 
     public function getMessages(): array
     {
@@ -300,17 +297,12 @@ class UserDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function updateProfileById(int $id, string $username, string $email, ?string $password = null): ?User
+    public function updateProfileById(int $id, string $username, string $email): ?User
     {
-        if ($password !== null && $password !== "") {
-            $sql = "UPDATE users SET name_user = ?, email = ?, password = ?, updated_at = NOW() WHERE id = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$username, $email, $password, $id]);
-        } else {
-            $sql = "UPDATE users SET name_user = ?, email = ?, updated_at = NOW() WHERE id = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$username, $email, $id]);
-        }
+
+        $sql = "UPDATE users SET name_user = ?, email = ?, updated_at = NOW() WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$username, $email, $id]);
 
         return $this->findById($id);
     }

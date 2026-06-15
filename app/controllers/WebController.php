@@ -25,18 +25,10 @@ class WebController
         $usersCount = (new UserDAO())->getUsersCount();
         $pacientesCount = (new UserDAO())->getPacientesCount();
         $devicesCount = (new UserDAO())->getDevicesCount();
-<<<<<<< HEAD
-=======
-        $tempCount = (new UserDAO())->getTempCount();
->>>>>>> c5571d52661f4ddca9a93ec8701aeb53a5929716
         $this->view('dashboard', [
             'userCount' => $usersCount,
             'pacientesCount' => $pacientesCount,
             'devicesCount' => $devicesCount,
-<<<<<<< HEAD
-=======
-            'tempCount' => $tempCount
->>>>>>> c5571d52661f4ddca9a93ec8701aeb53a5929716
         ]);
     }
 

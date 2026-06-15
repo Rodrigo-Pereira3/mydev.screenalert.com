@@ -57,7 +57,6 @@ class UserController
 
       $username = trim($data["username"] ?? $user->getNameUser());
       $email = trim($data["email"] ?? $user->getEmail());
-      $password = trim($data["password"] ?? "");
 
       if ($email !== $user->getEmail()) {
         $existingUser = $userDao->findByEmailAPP($email);
@@ -67,17 +66,11 @@ class UserController
         }
       }
 
-      $hashedPassword = null;
-
-      if ($password !== "") {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-      }
-
+  
       $updatedUser = $userDao->updateProfileById(
         (int)$userId,
         $username,
-        $email,
-        $hashedPassword
+        $email
       );
 
       $dataResponse = [

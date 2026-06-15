@@ -253,9 +253,9 @@ class AuthController
 
             $link = $baseUrl . "/verify-email?token=" . urlencode($token);
 
-           $subject = "Verifica o teu email (expira em 5 min)";
+            $subject = "Verifica o teu email (expira em 5 min)";
 
-$html = '
+            $html = '
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -282,7 +282,7 @@ Leve as suas mensagens para qualquer ecrã.
 
 <tr>
 <td style="padding:45px 40px; text-align:center;">
-<h2>Olá, '.htmlspecialchars($username).'!</h2>
+<h2>Olá, ' . htmlspecialchars($username) . '!</h2>
 
 <p style="color:#666666; font-size:16px;">
 Obrigado por te juntares ao <strong>Screen Alert!</strong>.<br><br>
@@ -292,7 +292,7 @@ Para ativares a tua conta, clica no botão abaixo.
 <table align="center" cellpadding="0" cellspacing="0" border="0" style="margin:35px auto;">
 <tr>
 <td align="center" style="background-color:#6C3BFF; border-radius:12px;">
-<a href="'.$link.'"
+<a href="' . $link . '"
 style="display:inline-block; padding:16px 40px; color:#ffffff; text-decoration:none; font-weight:bold;">
 Verificar Conta
 </a>
@@ -305,8 +305,8 @@ Se o botão não funcionar:
 </p>
 
 <p>
-<a href="'.$link.'" style="color:#FF5FA2;">
-'.$link.'
+<a href="' . $link . '" style="color:#FF5FA2;">
+' . $link . '
 </a>
 </p>
 
@@ -320,7 +320,7 @@ Este link expira em <strong>5 minutos</strong>.
 <tr>
 <td style="background-color:#fafafa; padding:30px; text-align:center;">
 <p style="margin:0; color:#999999; font-size:13px;">
-© '.date('Y').' Screen Alert! • Todos os direitos reservados.
+© ' . date('Y') . ' Screen Alert! • Todos os direitos reservados.
 </p>
 </td>
 </tr>
@@ -358,7 +358,7 @@ Este link expira em <strong>5 minutos</strong>.
         }
     }
 
-    
+
     public function verifyEmailForm(): void
     {
         $token = $_GET['token'] ?? '';
@@ -371,7 +371,7 @@ Este link expira em <strong>5 minutos</strong>.
         (new WebController())->verifyEmail($token);
     }
 
-    
+
     public function verifyEmailSubmit(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE)

@@ -3,18 +3,18 @@
 class Temperature
 {
     private int $id;
-    private int $idUser;
+    private int $idDevice;
     private float $temperature;
     private string $temperatureTime;
 
     public function __construct(
         int $id,
-        int $idUser,
+        int $idDevice,
         float $temperature,
         string $temperatureTime
     ) {
         $this->id = $id;
-        $this->idUser = $idUser;
+        $this->idDevice = $idDevice;
         $this->temperature = $temperature;
         $this->temperatureTime = $temperatureTime;
     }
@@ -29,14 +29,14 @@ class Temperature
         $this->id = $id;
     }
 
-    public function getIdUser(): int
+    public function getIdDevice(): int
     {
-        return $this->idUser;
+        return $this->idDevice;
     }
 
-    public function setIdUser(int $idUser): void
+    public function setIdDevice(int $idDevice): void
     {
-        $this->idUser = $idUser;
+        $this->idDevice = $idDevice;
     }
 
     public function getTemperature(): float
