@@ -25,12 +25,10 @@ class WebController
         $usersCount = (new UserDAO())->getUsersCount();
         $pacientesCount = (new UserDAO())->getPacientesCount();
         $devicesCount = (new UserDAO())->getDevicesCount();
-        $alertsCount = (new UserDAO())->getAlertsCount();
         $this->view('dashboard', [
             'userCount' => $usersCount,
             'pacientesCount' => $pacientesCount,
             'devicesCount' => $devicesCount,
-            'alertsCount' => $alertsCount
         ]);
     }
 

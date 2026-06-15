@@ -170,14 +170,6 @@ class UserDAO
         return (int) $stmt->fetchColumn();
     }
 
-    public function getAlertsCount(): int
-    {
-        $sql = "SELECT COUNT(*) FROM alerts";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-
-        return (int) $stmt->fetchColumn();
-    }
 
     public function getMessages(): array
     {
@@ -410,7 +402,12 @@ class UserDAO
 
     public function getTemperatures(int $pacienteId): array
     {
-        $sql = "SELECT id, id_user, temperature, temperature_time FROM temperatures WHERE id_user = ? ORDER BY temperature_time DESC";
+        $sql = "SELECT t.id, t.temperature, t.temperature_time, d.token_device
+            FROM users u
+            INNER JOIN screen_alert_displays d ON d.id_user = u.id
+            INNER JOIN temperatures t ON t.id_device = d.id
+            WHERE u.id = ?
+            ORDER BY t.temperature_time DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pacienteId]);
         $temperatures = [];
@@ -418,7 +415,7 @@ class UserDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $temperatures[] = new Temperature(
                 $row['id'],
-                $row['id_user'],
+                $pacienteId,
                 $row['temperature'],
                 $row['temperature_time']
             );
