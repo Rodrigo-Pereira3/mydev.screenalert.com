@@ -169,10 +169,9 @@ class UserDAO
 
         return (int) $stmt->fetchColumn();
     }
-
     public function getTempCount(): int
     {
-        $sql = "SELECT COUNT(*) FROM temperature";
+        $sql = "SELECT COUNT(*) FROM temperatures";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
@@ -297,12 +296,17 @@ class UserDAO
         return (int) $this->conn->lastInsertId();
     }
 
-    public function updateProfileById(int $id, string $username, string $email): ?User
+    public function updateProfileById(int $id, string $username, string $email, ?string $password = null): ?User
     {
-
-        $sql = "UPDATE users SET name_user = ?, email = ?, updated_at = NOW() WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$username, $email, $id]);
+        if ($password !== null && $password !== "") {
+            $sql = "UPDATE users SET name_user = ?, email = ?, password = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$username, $email, $password, $id]);
+        } else {
+            $sql = "UPDATE users SET name_user = ?, email = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$username, $email, $id]);
+        }
 
         return $this->findById($id);
     }
@@ -405,12 +409,7 @@ class UserDAO
 
     public function getTemperatures(int $pacienteId): array
     {
-        $sql = "SELECT t.id, t.temperature, t.temperature_time, d.token_device
-            FROM users u
-            INNER JOIN screen_alert_displays d ON d.id_user = u.id
-            INNER JOIN temperatures t ON t.id_device = d.id
-            WHERE u.id = ?
-            ORDER BY t.temperature_time DESC";
+        $sql = "SELECT id, id_user, temperature, temperature_time FROM temperatures WHERE id_user = ? ORDER BY temperature_time DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pacienteId]);
         $temperatures = [];
@@ -418,7 +417,7 @@ class UserDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $temperatures[] = new Temperature(
                 $row['id'],
-                $pacienteId,
+                $row['id_user'],
                 $row['temperature'],
                 $row['temperature_time']
             );
