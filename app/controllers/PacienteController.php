@@ -388,6 +388,79 @@ class PacienteController
             ], 400);
         }
     }
+    public function getHorarioById(object $tokenDecoded, int $pacienteId, int $horarioId): void
+    {
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $userDAO = new UserDAO();
+
+            $paciente = $userDAO->findById($pacienteId);
+            if (!$paciente || $paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão.");
+            }
+
+            $horario = $userDAO->getHorarioById($horarioId, $pacienteId);
+            if (!$horario) {
+                throw new Exception("Horário não encontrado.");
+            }
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Detalhe do Horário obtido com sucesso',
+                'data' => $horario
+            ], 200);
+        } catch (Exception $e) {
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+        }
+    }
+
+    public function updateHorario(object $tokenDecoded, int $pacienteId, int $horarioId): void
+    {
+        $pdo = DatabaseSingle::connect();
+        $pdo->beginTransaction();
+        try {
+            $cuidadorId = (int) $tokenDecoded->data->id;
+            $userDAO = new UserDAO();
+
+            $paciente = $userDAO->findById($pacienteId);
+            if (!$paciente || $paciente->getIdCuidador() !== $cuidadorId) {
+                throw new Exception("Sem permissão.");
+            }
+
+            $body = json_decode(file_get_contents('php://input'), true);
+            $name_medication = trim($body['name_medication'] ?? '');
+            $description_medication = trim($body['description_medication'] ?? '');
+            $days = $body['days'] ?? [];
+
+            if ($name_medication === '')
+                throw new Exception("Nome obrigatório.");
+            if (empty($days))
+                throw new Exception("Pelo menos um dia obrigatório.");
+
+            $userDAO->updateScheduleMedication($horarioId, $pacienteId, $name_medication, $description_medication, $days);
+
+            $pdo->commit();
+
+            $horarioAtualizado = $userDAO->getHorarioById($horarioId, $pacienteId);
+
+            Utils::jsonResponse([
+                'success' => true,
+                'message' => 'Horário atualizado',
+                'data' => $horarioAtualizado
+            ], 200);
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            Utils::jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => []
+            ], 400);
+        }
+    }
 
     public function temperaturas(object $tokenDecoded, int $id): void
     {

@@ -392,6 +392,40 @@ class UserDAO
         return $schedules;
     }
 
+    public function getHorarioById(int $horarioId, int $pacienteId): ?array
+    {
+        $sql = "SELECT id, name_medication, description_medication 
+            FROM schedule_medications 
+            WHERE id = ? AND id_user = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$horarioId, $pacienteId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row)
+            return null;
+
+        $sql2 = "SELECT day_of_doce, doce FROM day_for_medications WHERE id_schedule_medication = ?";
+        $stmt2 = $this->conn->prepare($sql2);
+        $stmt2->execute([$horarioId]);
+        $row['days'] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+        return $row;
+    }
+
+    public function updateScheduleMedication(int $horarioId, int $pacienteId, string $name, string $description, array $days): void
+    {
+        $sql = "UPDATE schedule_medications SET name_medication = ?, description_medication = ? WHERE id = ? AND id_user = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$name, $description, $horarioId, $pacienteId]);
+
+        $sql2 = "DELETE FROM day_for_medications WHERE id_schedule_medication = ?";
+        $stmt2 = $this->conn->prepare($sql2);
+        $stmt2->execute([$horarioId]);
+
+        foreach ($days as $day) {
+            $this->insertDayForMedication($horarioId, (int) $day['day_of_week'], (int) $day['doce']);
+        }
+    }
+
     public function insertScheduleMedication(int $userId, string $name, string $description): int
     {
         $sql = "INSERT INTO schedule_medications (id_user, name_medication, description_medication) VALUES (?, ?, ?)";

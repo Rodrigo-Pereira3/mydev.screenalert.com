@@ -87,6 +87,17 @@ if (($uri === "/" || $uri === "/index") && $method === 'GET') {
   $tokenDecoded = AuthController::requireAuth();
   (new PacienteController())->gerirHorarioHistorico($tokenDecoded, (int)$m[1]);
   
+}elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/horario\/(\d+)/', $uri, $m) && $method === 'GET') {
+    $pacienteId = (int)$m[1];
+    $horarioId  = (int)$m[2];
+    $tokenDecoded = AuthController::requireAuth();
+    (new PacienteController())->getHorarioById($tokenDecoded, $pacienteId, $horarioId);
+
+} elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/horario\/(\d+)\/updateHorario/', $uri, $m) && $method === 'POST') {
+    $pacienteId = (int)$m[1];
+    $horarioId  = (int)$m[2];
+    $tokenDecoded = AuthController::requireAuth();
+    (new PacienteController())->updateHorario($tokenDecoded, $pacienteId, $horarioId);
 }
   
 elseif (preg_match('/\/cuidador\/paciente\/(\d+)\/temperatura/', $uri, $m) && $method === 'GET') {
