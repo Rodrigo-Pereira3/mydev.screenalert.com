@@ -407,9 +407,7 @@ Este link expira em <strong>5 minutos</strong>.
     //Este é o metodo que processa o login da nossa APP.
     public function loginApi()
     {
-        $pdo = DatabaseSingle::connect();
-
-        $pdo->beginTransaction();
+        
         try {
             $email = trim($_POST['email'] ?? '');
             $password = trim($_POST['password'] ?? '');
@@ -449,12 +447,9 @@ Este link expira em <strong>5 minutos</strong>.
                 ],
             ];
 
-            $pdo->commit();
-
             Utils::jsonResponse($responseData, 200);
 
         } catch (Exception $e) {
-            $pdo->rollBack();
 
             $responseData = [
                 'success' => false,
