@@ -422,7 +422,7 @@ class UserDAO
         $stmt2->execute([$horarioId]);
 
         foreach ($days as $day) {
-            $this->insertDayForMedication($horarioId, (int) $day['day_of_week'], (int) $day['doce']);
+            $this->insertDayForMedication($horarioId, (int) $day['day_of_doce'], (int) $day['doce']);
         }
     }
 
@@ -443,7 +443,11 @@ class UserDAO
 
     public function getTemperatures(int $pacienteId): array
     {
-        $sql = "SELECT id, id_user, temperature, temperature_time FROM temperatures WHERE id_user = ? ORDER BY temperature_time DESC";
+        $sql = "SELECT t.id, t.id_device, t.temperature, t.temperature_time
+            FROM temperatures t
+            INNER JOIN screen_alert_displays d ON t.id_device = d.id
+            WHERE d.id_user = ?
+            ORDER BY t.temperature_time DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pacienteId]);
         $temperatures = [];
@@ -451,7 +455,7 @@ class UserDAO
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $temperatures[] = new Temperature(
                 $row['id'],
-                $row['id_user'],
+                $row['id_device'],
                 $row['temperature'],
                 $row['temperature_time']
             );
