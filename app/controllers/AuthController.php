@@ -427,7 +427,7 @@ Este link expira em <strong>5 minutos</strong>.
                 return;
             }
 
-            if (!$user->isVerified()) {
+            if (!$user->getIsVerified()) {
                 throw new Exception("Email ainda não verificado. Verifica a tua caixa de entrada.");
             }
 
