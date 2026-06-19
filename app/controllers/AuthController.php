@@ -427,6 +427,10 @@ Este link expira em <strong>5 minutos</strong>.
                 return;
             }
 
+            if (!$user->isVerified()) {
+                throw new Exception("Email ainda não verificado. Verifica a tua caixa de entrada.");
+            }
+
             $payload = [
                 "iat" => time(),
                 "exp" => time() + 3600,

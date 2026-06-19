@@ -234,7 +234,7 @@ class UserDAO
     {
         $sql = "SELECT id, id_cuidador, is_admin, name_user, birth_date, email, password, status, is_verified, verified_at, created_at, deleted_at, updated_at
         FROM users 
-        WHERE email = :email AND is_admin = 0 LIMIT 1";
+        WHERE email = :email AND is_admin = 0 AND id_cuidador IS NULL LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
